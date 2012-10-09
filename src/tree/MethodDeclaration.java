@@ -1,6 +1,7 @@
-import java.util.ArrayList;
 
 package tree;
+
+import java.util.ArrayList;
 
 public class MethodDeclaration extends Declaration {
     List<Modifier> modifiers;

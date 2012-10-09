@@ -1,6 +1,7 @@
-import java.util.ArrayList;
 
 package tree;
+
+import java.util.ArrayList;
 
 /** A list of statements, primarily the meat of a method.
  *

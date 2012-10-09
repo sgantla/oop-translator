@@ -1,6 +1,7 @@
-import java.util.ArrayList;
 
 package tree;
+
+import java.util.ArrayList;
 
 /** Expression representing a method call.
  * 

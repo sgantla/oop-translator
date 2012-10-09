@@ -1,6 +1,7 @@
-import java.util.ArrayList;
 
 package tree;
+
+import java.util.ArrayList;
 
 /** Declaration representing a class, the header of a class.
  *
