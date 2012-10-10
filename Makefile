@@ -14,3 +14,6 @@ clean :
 
 jar:
 	jar cf bin/oop.jar bin/oop
+
+docs:
+	javadoc -d doc -private src/oop/*/*.java
