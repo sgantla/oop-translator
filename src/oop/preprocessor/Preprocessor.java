@@ -18,7 +18,7 @@ import xtc.util.SymbolTable;
 */
 class Preprocessor {
    
-    private final String FULLY_QUALIFIED_ROOT_CLASS_NAME = "java.lang.Object";
+    private static final String FULLY_QUALIFIED_ROOT_CLASS_NAME = "java.lang.Object";
     /**
     * Preprocesses a single input source file.
     * Resolves all external file and library dependencie, locates and parses all files
@@ -110,7 +110,7 @@ class Preprocessor {
 	    throws Exception {
 	Map<String, CompilationUnitPod> compUnitMap = new HashMap<String, CompilationUnitPod>();
 
-	for (RawClassData entry : unprocessedData) {
+	for (RawClassData entry : classDependencySet) {
 	    File file = entry.getInputFile();
 	    
 	    /* Get relative path from the original source file to the dependency  
