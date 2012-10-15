@@ -9,4 +9,12 @@ public class CppCompilationUnit {
 	Analogous to the CompilationUnit GNode that is the root of the Java AST.
 
    */
+	
+	/* Fields */
+	private final NamespaceDeclaration namespace; 
+	private final List<UsingDeclaration> usingList; // not supported
+	private final ClassDeclaration classDeclaration; 
+	
+	/* Constructors */
+	public CppCompilationUnit()
 }
