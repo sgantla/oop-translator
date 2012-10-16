@@ -9,10 +9,10 @@ package oop.translator;
  * vtable for this class.
  */
 
-public class PhaseZero
+public class PhaseOne
 {
      
-    public PhaseZero(CompilationUnitPod rootPod)
+    public PhaseOne(CompilationUnitPod rootPod)
     {
 
     }

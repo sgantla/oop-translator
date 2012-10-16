@@ -20,4 +20,6 @@ public class ClassDeclaration extends Declaration {
 
     VTable _vTable; // female
     ClassDeclaration _inheritsFrom;
+    // JavaClassBody _jClassBody;
+    // Mapping _names;
 }
