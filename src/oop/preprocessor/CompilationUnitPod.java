@@ -1,8 +1,8 @@
 package oop.preprocessor;
 
 import java.lang.StringBuilder;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.StringWriter;
 
@@ -23,7 +23,7 @@ class CompilationUnitPod {
     private final boolean isLibraryClass;
     
     private final CppCompilationUnit cppCompilationUnit = new CppCompilationUnit();
-    private Set<CompilationUnitPod> childCompilationUnitPods = new HashSet<CompilationUnitPod>();
+    private List<CompilationUnitPod> childCompilationUnitPods = new ArrayList<CompilationUnitPod>();
     private CompilationUnitPod parentCompilationUnitPod;
     
     /* Constructors */
@@ -62,7 +62,7 @@ class CompilationUnitPod {
 	return symbolTable;
     }
  
-    public Set<CompilationUnitPod> getChildren() {
+    public List<CompilationUnitPod> getChildren() {
 	return childCompilationUnitPods;
     }
     
