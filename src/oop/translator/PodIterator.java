@@ -13,6 +13,7 @@ public class PodIterator
     public PodIterator(CompilationUnitPod rootPod)
     {
         this.rootPod = rootPod;
+        currentPod = rootPod;
     }
 
     // breadth first

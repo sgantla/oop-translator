@@ -66,6 +66,11 @@ class CompilationUnitPod {
 	return childCompilationUnitPods;
     }
     
+    public CppCompilationUnit getCppCompilationUnit()
+    {
+        return cppCompilationUnit;
+    }
+    
     /* Setters */
 
     public void setParentPod(CompilationUnitPod parent) {
@@ -76,6 +81,10 @@ class CompilationUnitPod {
 	this.childCompilationUnitPods.add(child);
     }
 
+    public void setCppCompilationUnit(CppCompilationUnit cppUnit)
+    {
+        cppCompilationUnit = cppUnit;
+    }
     /** 
     * Print a string representation of the pod and its children for use in debugging
     */
