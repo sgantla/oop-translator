@@ -1,23 +1,21 @@
-package oop.translatorTree;
+package oop.translator.tree;
 
 import java.util.List;
 import java.util.ArrayList;
 import xtc.tree.Node;
 
 class CompilationUnitTranslator extends TranslatorNode 
-                                implements CompilationUnit {
+    implements CompilationUnit {
 
     private class Input {
         String packageDec;      
         List<String> imports = new ArrayList<String>(); 
     }
-
     private class Output {
         List<NamespaceDeclaration> namespaces = new ArrayList<NamespaceDeclaration>();
         List<UsingDeclaration> usingDeclarations = new ArrayList<UsingDeclaration>();
         ClassDeclarationTranslator classDeclaration;
     }
-
     private Input java = new Input();
     private Output cpp = new Output();
 
