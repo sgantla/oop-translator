@@ -1,7 +1,16 @@
 package oop.translator;
 
-import java.util.List;
-import java.util.ArrayList;
+import oop.preprocessor.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+import oop.tree.interfaces.*;
+
+import xtc.tree.*;
+import xtc.type.*;
+import xtc.util.*;
+
+import java.util.*;
+import java.io.*;
 
 /* Initializes the C++ Compliation units, with namespace, any using declarations.
  *
@@ -24,9 +33,11 @@ public class PhaseOne {
     }
     
     private void translate(CompilationUnitPod currentPod) {
-        CompilationUnitTranslator translator = new CompilationUnitTranslator(null);
-        translator.initialize(currentPod.getJavaAST());
-        currentPod.setCppCompilationUnit(translator);
+        CompilationUnitTranslator cppAstRoot = new CompilationUnitTranslator(null);
+        Translator.setCurrentPod(currentPod);
+        // get ClassT using the name and the scope of the ast root
+        cppAstRoot.initialize(currentPod.getJavaAst());
+        currentPod.setCppCompilationUnit(cppAstRoot);
         
         List<CompilationUnitPod> children = currentPod.getChildren();
         for (CompilationUnitPod child : children) {

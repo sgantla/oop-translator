@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.io.File;
 import java.io.StringWriter;
 
+import oop.translatorTree.*;
+import oop.translator.*;
+
 import xtc.tree.Node;
 import xtc.tree.Printer;
 import xtc.util.SymbolTable;
+import xtc.type.*;
 
-import oop.tree.CppCompilationUnit;
-
-class CompilationUnitPod {
+public class CompilationUnitPod {
 
     /* Fields */
 
@@ -22,9 +24,11 @@ class CompilationUnitPod {
     private final File relativeDir;
     private final boolean isLibraryClass;
     
-    private final CppCompilationUnit cppCompilationUnit = new CppCompilationUnit();
+    private CompilationUnitTranslator cppCompilationUnit;
     private List<CompilationUnitPod> childCompilationUnitPods = new ArrayList<CompilationUnitPod>();
     private CompilationUnitPod parentCompilationUnitPod;
+    private InheritedData inheritedData;
+    private ClassT classType;
     
     /* Constructors */
 
@@ -66,12 +70,33 @@ class CompilationUnitPod {
 	return childCompilationUnitPods;
     }
     
-    public CppCompilationUnit getCppCompilationUnit()
+    public CompilationUnitPod getParentPod() {
+	return parentCompilationUnitPod;
+    }
+    
+    public CompilationUnitTranslator getCppCompilationUnit()
     {
         return cppCompilationUnit;
     }
     
+    public ClassT getClassType() {
+	return classType;
+    }
+    
+    public InheritedData getInheritedData() {
+	return inheritedData;
+    }
+    
+    
     /* Setters */
+    
+    public void setClassType(ClassT classType) {
+	this.classType = classType;
+    }
+    
+    public void setInheritedData(InheritedData inheritedData) {
+	this.inheritedData = inheritedData;
+    }
 
     public void setParentPod(CompilationUnitPod parent) {
 	this.parentCompilationUnitPod = parent;
@@ -81,7 +106,7 @@ class CompilationUnitPod {
 	this.childCompilationUnitPods.add(child);
     }
 
-    public void setCppCompilationUnit(CppCompilationUnit cppUnit)
+    public void setCppCompilationUnit(CompilationUnitTranslator cppUnit)
     {
         cppCompilationUnit = cppUnit;
     }

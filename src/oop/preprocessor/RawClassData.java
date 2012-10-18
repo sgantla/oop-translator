@@ -5,7 +5,7 @@ import java.io.File;
 import xtc.tree.Node;
 import xtc.util.SymbolTable;
 
-class RawClassData {
+public class RawClassData {
 	
     private Node astRoot;
     private SymbolTable symbolTable;

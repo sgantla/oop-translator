@@ -1,37 +1,41 @@
-package oop.translator.tree;
+package oop.translatorTree;
 
-import java.util.List;
-import java.util.ArrayList;
-import xtc.tree.Node;
+import oop.preprocessor.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+import oop.tree.interfaces.*;
 
-class ClassBodyTranslator extends TranslatorNode 
+
+import xtc.tree.*;
+import xtc.type.*;
+import xtc.util.*;
+
+import java.util.*;
+import java.io.*;
+
+public class ClassBodyTranslator extends TranslatorNode 
     implements ClassBody {
-
-    private class Output {
-        List<DeclarationTranslator> declarations = new ArrayList<DeclarationTranslator>();
-    }
-    private Output cpp = new Output();
-
+	
     private List<FieldDeclarationTranslator> fieldDeclarations = new ArrayList<FieldDeclarationTranslator>();
     
-    private List<MethodDeclarationTranslator> privateMethodDeclarations = new ArrayList<MethodDeclarationTranslator();
-    private List<MethodDeclarationTranslator> staticMethodDeclarations = new ArrayList<MethodDeclarationTranslator();
-    private List<MethodDeclarationTranslator> virtualMethodDeclarations = new ArrayList<MethodDeclarationTranslator();
+    private List<MethodDeclarationTranslator> privateMethodDeclarations = new ArrayList<MethodDeclarationTranslator>();
+    private List<MethodDeclarationTranslator> staticMethodDeclarations = new ArrayList<MethodDeclarationTranslator>();
+    private List<MethodDeclarationTranslator> virtualMethodDeclarations = new ArrayList<MethodDeclarationTranslator>();
     private List<MethodData> virtualMethodTable;
     
     private List<ConstructorDeclarationTranslator> constructorDeclarations = new ArrayList<ConstructorDeclarationTranslator>();
     private List<InitializationField> initializationList = new ArrayList<InitializationField>();
     
-    private InheritedData inheritedData = AstUtil.retrieveInheritedData(this);  // unimplemented   
-    // assuming that the inherited data is deep copied, and will not be modified from an external class later.
-       
-    public InheritedData getInheritedData() {
-        return inheritedData;
+    private InheritedData inheritedData;
+    
+    public ClassBodyTranslator(TranslatorNode parent) {
+	    super(parent);
     }
     
-    public List<DeclarationTranslator> getDeclarations() {
+    /* ClassBody Members */
+    public List<Declaration> getDeclarations() {
 	
-	    List<DeclarationTranslator> retList = new List<DeclarationTranslator>();
+	    List<Declaration> retList = new ArrayList<Declaration>();
 	    retList.addAll(fieldDeclarations);
 	    retList.addAll(privateMethodDeclarations);
 	    retList.addAll(staticMethodDeclarations);
@@ -40,111 +44,152 @@ class ClassBodyTranslator extends TranslatorNode
 	    
 	    return retList;
     }    
+    
+    /* CppAstNode Members */
     public CppAstUtil.NodeName getNodeType () {
 	    return CppAstUtil.NodeName.ClassBody;
     }
-    public ClassBodyTranslator(TranslatorNode parent) {
-	    super(parent);
-    }
+
+    /* TranslatorNode Members */
+    public void initialize(Node n) {  
     
-    public void initialize(Node n) {   
+	// Get field, method, constructor data of parent to implement inheritance
+	inheritedData = Translator.retrieveInheritedData();  
+	
     	for (Object child : n) {
     	    if (child instanceof Node) {
 		Node childNode = (Node) child;
 		JavaAstUtil.NodeName childName = JavaAstUtil.NodeName.valueOf(childNode.getName());
-
 		if (childName == JavaAstUtil.NodeName.FieldDeclaration) {
 		    initializeFieldDeclaration(childNode);
 		} else if (childName == JavaAstUtil.NodeName.MethodDeclaration) {
-		    initializeMethodDeclaration(childNode);
-		} else if (childName == JavaAstUtil.NodeName.ConstructorDeclaration) {
-		    initializeConstructorDeclaration(childNode);
-		}
+		    initializeMethodDeclaration(childNode); // The java AST will be simplified, so both methods and constructors will appear as MethodDeclaration
+		} 
 	    }
     	}
 
 	finishFieldInitialization();
 	finishMethodInitialization();
 	finishConstructorInitialization();
+	
+	// Report back with the modified data for use by any subclasses
+	Translator.reportInheritedData(inheritedData);
     }
     
     private void initializeFieldDeclaration(Node fieldDecNode) {
-	List<Node> singleDeclarations = JavaAstUtil.splitFieldDeclarationByDeclarator(childNode); // unimplemented
+    
+	// Split the java AST node into such that each one has only one declarator
+	List<Node> singleDeclarations = new ArrayList<Node>();
+	singleDeclarations.add(fieldDecNode);     // JavaAstUtil.splitFieldDeclarationByDeclarator(fieldDecNode), not yet implemented 
+	
 	List<FieldDeclarationTranslator> parentFieldDeclarations = inheritedData.getFieldDeclarations();
+	Set<String> parentDeclarators = new HashSet<String>();
+	for (FieldDeclarationTranslator parentDeclaration : parentFieldDeclarations) {
+	    parentDeclarators.add(parentDeclaration.getDeclarator());
+	}
 	
 	for (Node declaration : singleDeclarations) {
 	    FieldDeclarationTranslator fd = new FieldDeclarationTranslator(this);
 	    fd.initialize(declaration);
-    
-    	    String newDeclarator = fd.getDeclarator();
-	    for (FieldDeclarationTranslator parentDeclaration : parentFieldDeclarations) {
-		if (parentDeclaration.getDeclarator().equals(newDeclarator)) {
-		    // do the name mangling
-		}
-	    }
 	    
+    	    String declarator = fd.getDeclarator();
+    	    
+    	    // If there is a naming conflict between parent and child field declarators
+    	    if (parentDeclarators.contains(declarator)) { 
+		String newDeclarator = Translator.mangleFieldName(declarator, Translator.getClassType());
+		fd.setDeclarator(newDeclarator);
+    	    }
+
+	    // If declaration contains an expression (and isn't static), move the expression to the initialization list for the constructor
 	    if (fd.hasExpression() && !fd.isStatic()) { 
-		Expression expr = fd.removeExpression();
+		ExpressionTranslator expr = fd.removeExpression();
 		initializationList.add(new InitializationField(fd, expr));
 	    }
 	    
+	    // Save field declaration
 	    fieldDeclarations.add(fd);
 	}
     }
     
     private void initializeMethodDeclaration(Node methodDecNode) {
+	
+	// A null return value indicates a constructor
+	if (methodDecNode.get(2) == null) {
+	    initializeConstructorDeclaration(methodDecNode);
+	    return;
+	}
+	
 	MethodDeclarationTranslator md = new MethodDeclarationTranslator(this);
-	methodDeclarations.add(md);
-	md.initialize(childNode);
+	md.initialize(methodDecNode);
 	
-	String methodName = md.getMethodName();
-	Type returnType = md.getReturnType();
-	List<Type> paramTypes = md.getParamTypes();
-	ClassReference class = AstUtil.getClassReference(this); // unimplemented
+	MethodT methodType = md.getMethodType();
+	String methodName = methodType.getName();
+	ClassT classType = Translator.getClassType();
 	
-	MethodData newMethod = new MethodData(methodName, returnType, paramTypes, class); // unimplemented
-
-	List<MethodData> staticMethodTable = inheritedData.getStaticMethodTable(); // unimplemented
-	List<MethodData> virtualMethodTable = inheritedData.getVirtualMethodTable(); // unimplemented
-	
-	if (md.isPrivateMethod()) {
+	if (md.isPrivate()) {
 	    privateMethodDeclarations.add(md);
-	} else if (md.isStatic()) {
-	    int i = inheritedData.indexOf(md);
-	    if (i >= 0) {
-		staticMethodTable.set(i, newMethod);
-	    } else {
-		staticMethodTable.add(newMethod);
-	    }
-	    staticMethodDeclarations.add(md);
 	} else {
-	    int i = virtualMethodTable.indexOf(newMethod);
-	    if (i >= 0) {
-		virtualMethodTable.set(i, newMethod);
+	    
+	    List<MethodData> table;
+	    if (md.isStatic()) {
+		staticMethodDeclarations.add(md);
+		table = inheritedData.getStaticMethodTable(); 
 	    } else {
-		virtualMethodTable.add(newMethod);
+		virtualMethodDeclarations.add(md);
+		table = inheritedData.getVirtualMethodTable(); 
 	    }
-	    virtualMethodDeclarations.add(md);
+
+	    int i = table.indexOf(new MethodData(methodName));
+	    if (i >= 0) { // If the method name matches another name in the method table inherited from parent
+	    
+		String newMethodName = Translator.mangleMethodName(methodType, classType); // Will return the same name until we need to implement overloading
+		
+		if (!newMethodName.equals(methodName)) { 
+		    md.setMethodName(newMethodName);
+		    methodType = md.getMethodType();
+		    
+		    int j = table.indexOf(new MethodData(methodName));
+		    if (j >= 0) { 
+			table.set(j, new MethodData(methodType, classType)); // Overriding a method that was previously mangled in the parent class
+		    } else {
+			table.add(new MethodData(methodType, classType)); // First time that method with this signature was mangled
+		    }
+		} else {
+		    table.set(i, new MethodData(methodType, classType)); // Overriding a method that was not mangled in the parent class
+		}
+	    } else {
+		table.add(new MethodData(methodType, classType)); // First time this method signature has been seen
+	    }
+	    
 	}
     }
     
     private void initializeConstructorDeclaration(Node constructorDecNode) {
 	ConstructorDeclarationTranslator cd = new ConstructorDeclarationTranslator(this);
+	cd.initialize(constructorDecNode);
 	constructorDeclarations.add(cd);
-	cd.initialize(childNode);
     }
     
     private void addStaticMethodReference(MethodData method) {
-	staticMethodDeclarations.add(MethodDeclarationTranslator.newStaticReference(method)); // unimplemented
+	// We need to have the subclass point to a static method defined in a parent class. Not yet implemented.
     }
     
     private void finishFieldInitialization() {
-	List<FieldDeclarationTranslator> parentFieldDeclarations = inheritedData.fieldDeclarations();
-	parentFieldDeclarations.addAll(fieldDeclarations);
-	fieldDeclarations = new ArrayList<FieldDeclarationTranslator>().addAll(parentFieldDeclarations);
+    
+	// Add child field declarations after parent declarations
+	List<FieldDeclarationTranslator> temp = new ArrayList<FieldDeclarationTranslator>();
+	temp.addAll(inheritedData.getFieldDeclarations());
+	temp.addAll(fieldDeclarations);
+	
+	// Set field declarations and inherited data to the full list of declarations
+	fieldDeclarations = temp;
+	inheritedData.setFieldDeclarations(temp);
     }
     
     private void finishMethodInitialization() {
+    
+	/* If the subclass has inherited static methods but not overriden them
+	   We need to reference them somehow */
 	List<MethodData> staticMethodTable = inheritedData.getStaticMethodTable(); 
 	Set<String> staticMethodNames = new HashSet<String>();
 	
@@ -152,7 +197,7 @@ class ClassBodyTranslator extends TranslatorNode
 	    staticMethodNames.add(methodDec.getMethodName());
 	}
 	for (MethodData method : staticMethodTable) {
-	    if (!staticMethodNames.contains(method.getMethodName()) {
+	    if (!staticMethodNames.contains(method.getMethodType().getName())) {
 		addStaticMethodReference(method);
 	    }
 	}
@@ -161,30 +206,29 @@ class ClassBodyTranslator extends TranslatorNode
     }
     
     private void finishConstructorInitialization() {
-	List<InitializationField> parentInitializationList = inheritedData.getInitializationList();
-	parentInitializationList.addAll(initializationList);
-	initializationList = new ArrayList<Initialization>().addAll(parentInitializationList);
-
+	List<InitializationField> temp = new ArrayList<InitializationField>();
+	temp.addAll(inheritedData.getInitializationList());
+	temp.addAll(initializationList);
+	initializationList = temp;
+	
 	ConstructorDeclarationTranslator constructor;
 	if (constructorDeclarations.size() > 0) {
 	    constructor = constructorDeclarations.get(0);
 	} else {
-	    constructor = ConstructorDeclarationTranslator.newEmptyConstructor(this); // unimplemented
+	    constructor = ConstructorDeclarationTranslator.newEmptyConstructor(Translator.getClassType()); // unimplemented
 	}
 	
 	List<ConstructorData> constructorTable = inheritedData.getConstructorTable(); 
-	// assume one parent constructor
-	ConstructorData parentConstructor = constructorTable.get(0);
-	BlockTranslator parentConstructorBody = constructor.getBodyTranslator();
 	
-	constructor.setInitializationList(initializationList); // unimplemented
-	constructor.prependStatementBlock(parentConstructorBody); // unimplemented
+	ConstructorData parentConstructorData = constructorTable.get(0);
+	BlockTranslator parentConstructorBody = parentConstructorData.getBodyTranslator();
 	
-	String constructorName = constructor.getName();
-	List<Type> parameterTypes = constructor.getParamTypes();
-	BlockTranslator body = constructor.getBodyTranslator();
+	constructor.setInitializationList(initializationList); 
+	constructor.prependStatementBlock(parentConstructorBody); 
 	
-	ConstructorData constructorData = new ConstructorData(constructorName, parameterTypes, body);
-	constructorTable.set(0, constructor);
+	ConstructorData constructorData = new ConstructorData(constructor.getMethodType(), constructor.getConstructorBody());
+	constructorTable.set(0, constructorData);
+	
+	inheritedData.setInitializationList(initializationList);
     }
 }

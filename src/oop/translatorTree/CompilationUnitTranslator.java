@@ -1,10 +1,19 @@
-package oop.translator.tree;
+package oop.translatorTree;
 
-import java.util.List;
-import java.util.ArrayList;
-import xtc.tree.Node;
+import oop.preprocessor.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+import oop.tree.interfaces.*;
 
-class CompilationUnitTranslator extends TranslatorNode 
+import xtc.tree.*;
+import xtc.type.*;
+import xtc.util.*;
+import xtc.Constants;
+
+import java.util.*;
+import java.io.*;
+
+public class CompilationUnitTranslator extends TranslatorNode 
     implements CompilationUnit {
 
     private class Input {
@@ -12,32 +21,38 @@ class CompilationUnitTranslator extends TranslatorNode
         List<String> imports = new ArrayList<String>(); 
     }
     private class Output {
-        List<NamespaceDeclaration> namespaces = new ArrayList<NamespaceDeclaration>();
-        List<UsingDeclaration> usingDeclarations = new ArrayList<UsingDeclaration>();
+        List<String> namespaces = new ArrayList<String>();
+        List<String> usingDeclarations = new ArrayList<String>();
         ClassDeclarationTranslator classDeclaration;
     }
     private Input java = new Input();
     private Output cpp = new Output();
+    
+    public CompilationUnitTranslator(TranslatorNode parent) {
+        super(parent);
+    }
 
-    public List<NamespaceDeclaration> getNameSpaceDeclarations() {
+    /* CompilationUnit Members */ 
+    public List<String> getNameSpaceDeclarations() {
         return cpp.namespaces;
     }
-    public List<UsingDeclaration> getUsingDeclarations() {
+    public List<String> getUsingDeclarations() {
         return cpp.usingDeclarations;
     }
     public ClassDeclaration getClassDeclaration() {
         return cpp.classDeclaration;
     }
 
-    public CompilationUnitTranslator(TranslatorNode parent) {
-        super(parent);
-    }
-
+    /* CppAstNode Members */
     public CppAstUtil.NodeName getNodeType () {
         return CppAstUtil.NodeName.CompilationUnit;
     }
     
+    /* TranslatorNode Members */
     public void initialize(Node n) {
+    	String scopeName = n.getStringProperty(Constants.SCOPE);
+	setQualifiedScopeName(scopeName);
+	
         Node packageNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.PackageDeclaration);
         if (packageNode != null) {
             java.packageDec = JavaAstUtil.extractString(packageNode);

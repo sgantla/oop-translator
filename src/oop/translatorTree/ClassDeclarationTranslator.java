@@ -1,10 +1,19 @@
-package oop.translator.tree;
+package oop.translatorTree;
 
-import java.util.List;
-import java.util.ArrayList;
-import xtc.tree.Node;
+import oop.preprocessor.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+import oop.tree.interfaces.*;
 
-class ClassDeclarationTranslator extends DeclarationTranslator 
+import xtc.tree.*;
+import xtc.type.*;
+import xtc.Constants;
+import xtc.util.*;
+
+import java.util.*;
+import java.io.*;
+
+public class ClassDeclarationTranslator extends DeclarationTranslator 
     implements ClassDeclaration {
 
     private class Input { 
@@ -12,58 +21,57 @@ class ClassDeclarationTranslator extends DeclarationTranslator
 	String className;
 	String extension;
     }
-    
     private class Output {
 	List<Modifier> modifiers = new ArrayList<Modifier>();	
 	List<String> extensions = new ArrayList<String>();	
 	String className;
 	ClassBodyTranslator classBody;
     }
-
     private Input java = new Input();
     private Output cpp = new Output();
+    
+    public ClassDeclarationTranslator(TranslatorNode parent) {
+	super(parent);
+    }
 
+    /* ClassDeclaration Members */
     public List<Modifier> getModifiers() {
 	return cpp.modifiers;
     }
-
     public String getClassName() {
 	return cpp.className;
     }
-
     public List<String> getExtensions() {
 	return cpp.extensions;
     }
-
     public ClassBody getClassBody() {
 	return cpp.classBody;
     }
 
-    public ClassDeclarationTranslator(TranslatorNode parent) {
-	super(parent);
-    }
-    
+    /* CppAstNode Members */
     public CppAstUtil.NodeName getNodeType () {
 	return CppAstUtil.NodeName.ClassDeclaration;
     }
-
+    
+    /* TranslatorNode Members */
     public void initialize(Node n) {
-	Node modifiersNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Modifiers);
-	if (modifiersNode != null) {
-	    for (Node modifierNode : JavaAstUtil.getChildrenByName(modifiersNode, JavaAstUtil.NodeName.Modifier)) {
-		java.modifiers.add(JavaAstUtil.extractString(modifierNode));
-	    }
-	}
+	
+	// Record symbol table scope
+	String scopeName = n.getStringProperty(Constants.SCOPE);
+	setQualifiedScopeName(scopeName);
 
+	// Get extension (inheritance) info
 	Node extensionNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Extension);
 	if (extensionNode != null) {
 	    java.extension = JavaAstUtil.extractString(extensionNode);
 	}
 
+	// Get class name
 	java.className = n.getString(1);
 	cpp.className = java.className;
-	cpp.modifiers.add(Modifier.PUBLIC);
+	cpp.modifiers.add(Modifier.PUBLIC); // All classes will be public 
 
+	// Create ClassBodyTranslator child
 	Node classBodyNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.ClassBody);
 	if (classBodyNode != null) {
 	    cpp.classBody = new ClassBodyTranslator(this);

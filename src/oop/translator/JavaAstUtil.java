@@ -1,10 +1,18 @@
 package oop.translator;
 
-import xtc.tree.Node;
-import java.util.List;
-import java.util.ArrayList;
+import oop.preprocessor.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+import oop.tree.interfaces.*;
 
-class JavaAstUtil {
+import xtc.tree.*;
+import xtc.type.*;
+import xtc.util.*;
+
+import java.util.*;
+import java.io.*;
+
+public class JavaAstUtil {
 
     public static enum NodeName {
 	AdditiveExpression,
@@ -114,6 +122,11 @@ class JavaAstUtil {
 	WhileStatement,
 	Wildcard,
 	WildcardBound,
+    }
+    
+    public static List<Node> splitFieldDeclarationByDeclarator(Node n) {
+	return null;
+	
     }
     
     public static Node getChildByName(Node n, NodeName name) {

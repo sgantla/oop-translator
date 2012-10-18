@@ -1,6 +1,18 @@
 package oop.translator;
 
-class CppAstUtil {
+import oop.preprocessor.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+import oop.tree.interfaces.*;
+
+import xtc.tree.*;
+import xtc.type.*;
+import xtc.util.*;
+
+import java.util.*;
+import java.io.*;
+
+public class CppAstUtil {
     public static enum NodeName {
 	AdditiveExpression,
 	Annotation,
@@ -57,7 +69,8 @@ class CppAstUtil {
 	FormalParameters,
 	ForStatement,
 	Implementation,
-	ImportDeclaration ,
+	ImportDeclaration,
+	InitializationListEntry,
 	InstanceOfExpression,
 	InstantiatedType,
 	IntegerLiteral,

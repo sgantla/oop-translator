@@ -1,5 +1,20 @@
 package oop.translator;
-class InitializationField {
+
+import oop.preprocessor.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+import oop.tree.interfaces.*;
+
+import xtc.tree.*;
+import xtc.type.*;
+import xtc.util.*;
+
+import java.util.*;
+import java.io.*;
+
+public class InitializationField 
+    implements InitializationListEntry {
+    
     private FieldDeclarationTranslator fieldDeclaration;
     private ExpressionTranslator expression;
     
@@ -14,5 +29,13 @@ class InitializationField {
     
     public ExpressionTranslator getExpression() {
 	return expression;
+    }
+    
+    public String getDeclarator() {
+	return fieldDeclaration.getDeclarator();
+    }
+    
+    public CppAstUtil.NodeName getNodeType() {
+	return CppAstUtil.NodeName.InitializationListEntry;
     }
 }

@@ -1,4 +1,4 @@
-package oop.preprocessor;
+ package oop.preprocessor;
 
 import java.lang.StringBuilder;
 import java.util.Map;
@@ -12,8 +12,9 @@ import java.io.File;
 import xtc.tree.Node;
 import xtc.tree.GNode;
 import xtc.util.SymbolTable;
+import xtc.Constants;
 
-class AstPreprocessorUtilities {
+public class AstPreprocessorUtilities {
    
     /**
     * Splits an AST into multiple ASTs, one for each class declared. 
@@ -40,11 +41,14 @@ class AstPreprocessorUtilities {
 	    }
 	}
 	
+	String scopeName = ast.getStringProperty(Constants.SCOPE);
+	
 	if (classDeclarationChildren.size() == 1) {
 	    classAsts.add(ast);
 	} else {
 	    for (Object classDeclaration : classDeclarationChildren) {
 		GNode node = GNode.create("CompilationUnit");
+		node.setProperty(Constants.SCOPE, scopeName);
 		node.addAll(nonClassDeclarationChildren);
 		node.add(classDeclaration);
 		

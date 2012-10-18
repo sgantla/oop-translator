@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.io.File;
 
 import xtc.tree.Node;
@@ -16,7 +17,7 @@ import xtc.util.SymbolTable;
 /**
 * Preprocesses source file to prepare for Java to C++ translation stage
 */
-class Preprocessor {
+public class Preprocessor {
    
     private static final String FULLY_QUALIFIED_ROOT_CLASS_NAME = "java.lang.Object";
     /**
@@ -60,15 +61,64 @@ class Preprocessor {
 	
 	return rootPod;
     }
-  
-    private static List<File> getInputDirectories() {
+    
+    private static void getAllTables(CompilationUnitPod pod, Set<SymbolTable> tables) {
+	if (! pod.isLibraryClass()) {
+	    tables.add(pod.getSymbolTable());
+	}
+	
+	for (CompilationUnitPod child : pod.getChildren()) {
+	    getAllTables(child, tables);
+	}
+    }
+    
+    public static SymbolTable getMasterSymbolTable(CompilationUnitPod rootPod) {
+	
+	Set<SymbolTable> tables = new HashSet<SymbolTable>();
+	getAllTables(rootPod, tables);
+	
+	SymbolTable masterTable = new SymbolTable();
+	for (SymbolTable table : tables) {		
+	    mergeSymbolScopes(masterTable.root(), table.root());
+	}
+	
+	return masterTable;
+    }
+     
+    
+    private static void mergeSymbolScopes(SymbolTable.Scope masterScope, SymbolTable.Scope newScope) {
+	
+	for (Iterator<String> symbolIter = newScope.symbols(); symbolIter.hasNext();) {
+	    String symbol = symbolIter.next();
+	    if (!masterScope.isDefinedLocally(symbol)) {
+		masterScope.addDefinition(symbol, newScope.lookupLocally(symbol));
+	    }
+	}
+	
+	for (Iterator<String> scopeIter = newScope.nested(); scopeIter.hasNext();) {
+	    String scopeName = scopeIter.next();
+	    if (masterScope.hasNested(scopeName)) {
+		mergeSymbolScopes(masterScope.getNested(scopeName), newScope.getNested(scopeName));
+	    } else {
+		SymbolTable.Scope scope = newScope.getNested(scopeName);
+		if (masterScope.scopes == null) {
+		    masterScope.scopes = new HashMap<String, SymbolTable.Scope>();
+		}
+		masterScope.scopes.put(scopeName, scope);
+		scope.parent = masterScope;
+		scope.requalify();
+	    }
+	}
+    }
+    
+    private static List<File> getInputDirectories() throws Exception {
 	String classPathString = System.getProperty("java.class.path");
 	String[] classPaths = classPathString.split(System.getProperty("path.separator"));
 	    
 	List<File> inputDirs = new ArrayList<File>();
 	for (int i = 0; i < classPaths.length; i++) {
 	    
-	    inputDirs.add(new File(classPaths[i]));
+	    inputDirs.add(new File(classPaths[i]).getCanonicalFile());
 	}
 	
 	return inputDirs;

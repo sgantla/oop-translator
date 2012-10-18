@@ -1,8 +1,18 @@
-package oop.translator.tree;
-import java.util.*;
-import xtc.tree.Node;
+package oop.translatorTree;
 
-class FieldDeclarationTranslator extends DeclarationTranslator
+import oop.preprocessor.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+import oop.tree.interfaces.*;
+
+import xtc.tree.*;
+import xtc.type.*;
+import xtc.util.*;
+
+import java.util.*;
+import java.io.*;
+
+public class FieldDeclarationTranslator extends DeclarationTranslator
     implements FieldDeclaration {
 
     private class Input {
@@ -10,85 +20,71 @@ class FieldDeclarationTranslator extends DeclarationTranslator
     }
     private class Output {
 	List<Modifier> modifiers = new ArrayList<Modifier>();
-	TypeTranslator type;
+	Type type;
 	String declarator;
 	ExpressionTranslator assignment;
     }
-    
     private Input java = new Input();
     private Output cpp = new Output();
 
-    public String getDeclarator() {
-	return cpp.declarator;
-    }
-    
-    public Type getType() {
-	return cpp.Type;
-    }
-    
-    public ExpressionTranslator getExpression () {
-	return cpp.assignment;
-    }
-    
-    public ExpressionTranslator removeExpression () {
-	ExpressionTranslator expr = cpp.assignnment;
-	cpp.assignment = null;
-	return expr;
-    }
-    
-    public boolean hasExpression () {
-	return (cpp.assignment != null);
-    }
-    
-    public boolean isStatic() {
-	for (Modifier m : cpp.modifiers) {
-	    if (m == Modifier.STATIC) {
-		return true;
-	    }
-	}
-    }
-    
-    public CppAstUtil.NodeName getNodeType() {
-	return CppAstUtil.NodeName.FieldDeclaration;
-    }
-    
     public FieldDeclarationTranslator (TranslatorNode parent) {
 	super(parent);
     }
     
+    /* FieldDeclaration Members */
+    public String getDeclarator() {
+	return cpp.declarator;
+    }
+    public Type getType() {
+	return null; // Not implemented. Have to decide how to translate the java Type into cpp.
+    }
+    public ExpressionTranslator getExpression () {
+	return cpp.assignment;
+    }
+    
+    /* CppAstNode Members */
+    public CppAstUtil.NodeName getNodeType() {
+	return CppAstUtil.NodeName.FieldDeclaration;
+    }
+    
+    /* TranslatorNode Members */ 
     public void initialize(Node n) {
-	
+    
+	// Record if field is static 
 	Node modifiersNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Modifiers);
 	if (modifiersNode != null) {
 	    for (Node modifierNode : JavaAstUtil.getChildrenByName(modifiersNode, JavaAstUtil.NodeName.Modifier)) {
 		if (JavaAstUtil.extractString(modifierNode).equals("static")) {
-		    cpp.modifiers.add(MODIFIER.STATIC);
+		    cpp.modifiers.add(Modifier.STATIC);
 		}
 	    }
 	}
 	
-	Node typeNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Type);
-	TypeTranslator type = new TypeTranslator(this);
-	type.initialize(typeNode);
-	
 	Node declaratorsNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Declarators);
 	Node declaratorNode = JavaAstUtil.getChildByName(declaratorsNode, JavaAstUtil.NodeName.Declarator);
+	cpp.declarator = declaratorNode.getString(0);
+	// Resolve the declarator to a Type for the field
+	java.type = Translator.resolveDeclaratorType(cpp.declarator, this);
 	
-	int declaratorDimensions;
-	if (declaratorNode != null) {
-	    cpp.declarator = declaratorNode.getString(0);
-	    
-	    declaratorDimensions = JavaAstUtil.getDimensionNumber(declaratorNode.getNode(1)); // unimplemented
-	    
-	    Node expressionNode = declaratorNode.getNode(2);
-	    if (expressionNode != null) {
-		cpp.assignment = new ExpressionTranslator(this); // unimplemented
-		cpp.assignment.initialize(expressionNode);
-	    }
+	Node expressionNode = declaratorNode.getNode(2);
+	if (expressionNode != null) {
+	    /* Create child based on expression. Need to implement a general way to handle an expression child from any node */
 	}
-	
-	type.setDimensions(type.getDimensions() + declaratorDimensions);
-	
-	cpp.type = type;
     }
+    
+    /* FieldDeclaratorTranslator Members */
+    public ExpressionTranslator removeExpression () {
+	ExpressionTranslator expr = cpp.assignment;
+	cpp.assignment = null;
+	return expr;
+    }
+    public void setDeclarator(String declarator) {
+	cpp.declarator = declarator;
+    }
+    public boolean hasExpression () {
+	return (cpp.assignment != null);
+    }
+    public boolean isStatic() {
+	return (cpp.modifiers.indexOf(Modifier.STATIC) >= 0);
+    }   
 }

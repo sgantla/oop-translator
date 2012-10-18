@@ -26,7 +26,7 @@ import xtc.util.Tool;
 import xtc.util.SymbolTable;
 import xtc.util.Runtime;
 
-class DependencyResolver {
+public class DependencyResolver {
 		
     private static Runtime runtime;
 
@@ -50,7 +50,7 @@ class DependencyResolver {
 
     public static Set<RawClassData> resolve(File file) throws Exception {
 	List<File> inputDirs = new ArrayList<File>();
-	inputDirs.add(new File("."));
+	inputDirs.add(new File(".").getCanonicalFile());
 
 	return resolve(file, inputDirs);
     }
