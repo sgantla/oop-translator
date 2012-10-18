@@ -27,6 +27,7 @@ public class Translator {
 	currentPod.setInheritedData(data);
     }
     
+    /* TODO: Figure out how we're handling Library classes, because we're going to need to return their inheritance information as well. */
     public static InheritedData retrieveInheritedData() {
 	CompilationUnitPod parentPod = currentPod.getParentPod();
 	if (parentPod != null && !parentPod.isLibraryClass()) {
@@ -36,17 +37,18 @@ public class Translator {
 	}	
     }
     
-    public static ClassT getClassType () {
+    public static ClassT getClassType() {
 	return currentPod.getClassType();
     }
     
+    // TODO: fill out this method. Is there a limit to length of a method name in c++?
     public static String mangleMethodName(MethodT conflictingMethod, ClassT classType) {
 	return conflictingMethod.getName(); 
     }
     
     public static String mangleFieldName(String conflictingDeclarator, ClassT classType) {
 	String unqualifiedClassName = classType.getName();
-	return conflictingDeclarator + "__" + unqualifiedClassName; // To do: make record of name change 
+	return conflictingDeclarator + "__" + unqualifiedClassName; // TODO: make record of name change 
     }
     
     public static MethodT resolveMethodType(TranslatorNode method) {

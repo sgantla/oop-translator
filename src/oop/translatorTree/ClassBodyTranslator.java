@@ -74,7 +74,7 @@ public class ClassBodyTranslator extends TranslatorNode
 
 	finishFieldInitialization();
 	finishMethodInitialization();
-	//finishConstructorInitialization(); not fully implemented 
+	// TODO: finishConstructorInitialization(); not fully implemented 
 	
 	// Report back with the modified data for use by any subclasses
 	Translator.reportInheritedData(inheritedData);
@@ -84,7 +84,7 @@ public class ClassBodyTranslator extends TranslatorNode
     
 	// Split the java AST node into such that each one has only one declarator
 	List<Node> singleDeclarations = new ArrayList<Node>();
-	singleDeclarations.add(fieldDecNode);     // JavaAstUtil.splitFieldDeclarationByDeclarator(fieldDecNode), not yet implemented 
+	singleDeclarations.add(fieldDecNode);     // TODO: JavaAstUtil.splitFieldDeclarationByDeclarator(fieldDecNode), not yet implemented 
 	
 	List<FieldDeclarationTranslator> parentFieldDeclarations = inheritedData.getFieldDeclarations();
 	Set<String> parentDeclarators = new HashSet<String>();
@@ -174,7 +174,7 @@ public class ClassBodyTranslator extends TranslatorNode
     }
     
     private void addStaticMethodReference(MethodData method) {
-	// We need to have the subclass point to a static method defined in a parent class. Not yet implemented.
+	// TODO: We need to have the subclass point to a static method defined in a parent class. Not yet implemented.
     }
     
     private void finishFieldInitialization() {

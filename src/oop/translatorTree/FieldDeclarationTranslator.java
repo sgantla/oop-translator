@@ -69,7 +69,7 @@ public class FieldDeclarationTranslator extends DeclarationTranslator
 	
 	Node expressionNode = declaratorNode.getNode(2);
 	if (expressionNode != null) {
-	    /* Create child based on expression. Need to implement a general way to handle an expression child from any node */
+	    /* TODO: Create child based on expression. Need to implement a general way to handle an expression child from any node */
 	}
     }
     

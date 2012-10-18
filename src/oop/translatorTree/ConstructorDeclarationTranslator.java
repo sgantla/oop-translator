@@ -28,6 +28,7 @@ public class ConstructorDeclarationTranslator extends DeclarationTranslator
     public ConstructorDeclarationTranslator(TranslatorNode parent) {
 	super(parent);
     }
+
     /* ConstructorDeclaration Members */
     public List<Modifier> getModifiers() {return null;}
     public String getName() {return null;}
