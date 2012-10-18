@@ -46,7 +46,7 @@ public class MethodDeclarationTranslator extends DeclarationTranslator
 	return null;
     }
     public String getMethodName() {
-	return null;
+	return java.type.getName();
     }
     public List<FormalParameter> getFormalParameters() {
 	return null;
@@ -107,5 +107,6 @@ public class MethodDeclarationTranslator extends DeclarationTranslator
 	return (java.modifiers.indexOf(Modifier.STATIC) >= 0);
     }
     public void setMethodName(String name) {
+	java.type = new MethodT(java.type.getResult(), name, java.type.getParameters(), false, java.type.getExceptions());
     }
 }

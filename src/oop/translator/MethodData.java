@@ -17,8 +17,12 @@ public class MethodData {
     private MethodT methodType;
     private ClassT classType;
     
-    public boolean equals(MethodData otherData) {
-	return methodName.equals(otherData.methodName);
+    public boolean equals(Object otherData) {
+	if (otherData instanceof MethodData) {
+	    return methodName.equals(((MethodData)otherData).methodName);
+	} else {
+	    return otherData.equals(this);
+	}
     }
     
     public MethodData(MethodT methodType, ClassT classType) {

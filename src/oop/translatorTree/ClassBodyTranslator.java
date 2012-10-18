@@ -7,6 +7,7 @@ import oop.tree.interfaces.*;
 
 
 import xtc.tree.*;
+import xtc.Constants;
 import xtc.type.*;
 import xtc.util.*;
 
@@ -34,7 +35,6 @@ public class ClassBodyTranslator extends TranslatorNode
     
     /* ClassBody Members */
     public List<Declaration> getDeclarations() {
-	
 	    List<Declaration> retList = new ArrayList<Declaration>();
 	    retList.addAll(fieldDeclarations);
 	    retList.addAll(privateMethodDeclarations);
@@ -53,6 +53,10 @@ public class ClassBodyTranslator extends TranslatorNode
     /* TranslatorNode Members */
     public void initialize(Node n) {  
     
+    	// Record symbol table scope
+	String scopeName = n.getStringProperty(Constants.SCOPE);
+	setQualifiedScopeName(scopeName);
+	
 	// Get field, method, constructor data of parent to implement inheritance
 	inheritedData = Translator.retrieveInheritedData();  
 	
@@ -68,9 +72,9 @@ public class ClassBodyTranslator extends TranslatorNode
 	    }
     	}
 
-	finishFieldInitialization();
+	//finishFieldInitialization();
 	finishMethodInitialization();
-	finishConstructorInitialization();
+	//finishConstructorInitialization();
 	
 	// Report back with the modified data for use by any subclasses
 	Translator.reportInheritedData(inheritedData);
@@ -115,7 +119,7 @@ public class ClassBodyTranslator extends TranslatorNode
 	
 	// A null return value indicates a constructor
 	if (methodDecNode.get(2) == null) {
-	    initializeConstructorDeclaration(methodDecNode);
+	 //   initializeConstructorDeclaration(methodDecNode);
 	    return;
 	}
 	
@@ -125,7 +129,7 @@ public class ClassBodyTranslator extends TranslatorNode
 	MethodT methodType = md.getMethodType();
 	String methodName = methodType.getName();
 	ClassT classType = Translator.getClassType();
-	
+
 	if (md.isPrivate()) {
 	    privateMethodDeclarations.add(md);
 	} else {
@@ -138,7 +142,7 @@ public class ClassBodyTranslator extends TranslatorNode
 		virtualMethodDeclarations.add(md);
 		table = inheritedData.getVirtualMethodTable(); 
 	    }
-
+	
 	    int i = table.indexOf(new MethodData(methodName));
 	    if (i >= 0) { // If the method name matches another name in the method table inherited from parent
 	    
@@ -160,7 +164,6 @@ public class ClassBodyTranslator extends TranslatorNode
 	    } else {
 		table.add(new MethodData(methodType, classType)); // First time this method signature has been seen
 	    }
-	    
 	}
     }
     

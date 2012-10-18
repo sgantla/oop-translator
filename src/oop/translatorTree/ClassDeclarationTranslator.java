@@ -55,11 +55,8 @@ public class ClassDeclarationTranslator extends DeclarationTranslator
     
     /* TranslatorNode Members */
     public void initialize(Node n) {
-	
-	// Record symbol table scope
-	String scopeName = n.getStringProperty(Constants.SCOPE);
-	setQualifiedScopeName(scopeName);
 
+	
 	// Get extension (inheritance) info
 	Node extensionNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Extension);
 	if (extensionNode != null) {

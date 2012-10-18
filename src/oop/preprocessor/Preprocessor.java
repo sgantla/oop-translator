@@ -62,16 +62,6 @@ public class Preprocessor {
 	return rootPod;
     }
     
-    private static void getAllTables(CompilationUnitPod pod, Set<SymbolTable> tables) {
-	if (! pod.isLibraryClass()) {
-	    tables.add(pod.getSymbolTable());
-	}
-	
-	for (CompilationUnitPod child : pod.getChildren()) {
-	    getAllTables(child, tables);
-	}
-    }
-    
     public static SymbolTable getMasterSymbolTable(CompilationUnitPod rootPod) {
 	
 	Set<SymbolTable> tables = new HashSet<SymbolTable>();
@@ -85,9 +75,17 @@ public class Preprocessor {
 	return masterTable;
     }
      
+    private static void getAllTables(CompilationUnitPod pod, Set<SymbolTable> tables) {
+	if (! pod.isLibraryClass()) {
+	    tables.add(pod.getSymbolTable());
+	}
+	
+	for (CompilationUnitPod child : pod.getChildren()) {
+	    getAllTables(child, tables);
+	}
+    }
     
     private static void mergeSymbolScopes(SymbolTable.Scope masterScope, SymbolTable.Scope newScope) {
-	
 	for (Iterator<String> symbolIter = newScope.symbols(); symbolIter.hasNext();) {
 	    String symbol = symbolIter.next();
 	    if (!masterScope.isDefinedLocally(symbol)) {

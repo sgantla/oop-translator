@@ -36,7 +36,7 @@ public class FieldDeclarationTranslator extends DeclarationTranslator
 	return cpp.declarator;
     }
     public Type getType() {
-	return null; // Not implemented. Have to decide how to translate the java Type into cpp.
+	return java.type; // Not implemented. Have to decide how to translate the java Type into cpp.
     }
     public ExpressionTranslator getExpression () {
 	return cpp.assignment;
@@ -64,6 +64,7 @@ public class FieldDeclarationTranslator extends DeclarationTranslator
 	Node declaratorNode = JavaAstUtil.getChildByName(declaratorsNode, JavaAstUtil.NodeName.Declarator);
 	cpp.declarator = declaratorNode.getString(0);
 	// Resolve the declarator to a Type for the field
+
 	java.type = Translator.resolveDeclaratorType(cpp.declarator, this);
 	
 	Node expressionNode = declaratorNode.getNode(2);

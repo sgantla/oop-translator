@@ -46,15 +46,43 @@ public class Translator {
     
     public static String mangleFieldName(String conflictingDeclarator, ClassT classType) {
 	String unqualifiedClassName = classType.getName();
-	return conflictingDeclarator + "__" + unqualifiedClassName;
+	return conflictingDeclarator + "__" + unqualifiedClassName; // To do: make record of name change 
     }
     
     public static MethodT resolveMethodType(MethodDeclarationTranslator method) {
-	return null; // not yet implemented
+	
+	String scopeName = method.getQualifiedScopeName();
+	SymbolTable.Scope scope = masterSymbolTable.getScope(scopeName);
+	SymbolTable.Scope classScope = scope.getParent();
+	
+	/* Under the class scope, there is both a symbol that points to a method definition,
+	   as well as a nested scope for that method. They have the same name, so we can use the scope name as a symbol here */
+	Object value = classScope.lookupLocally(Utilities.unqualify(scopeName)); 
+	if (value instanceof MethodT) {
+	    return (MethodT) value;
+	}
+	
+	return null;
     }
     
     public static Type resolveDeclaratorType(String declarator, TranslatorNode node) {
-	return null; // not yet implemented
+	
+	// Find closest scope
+	String qualifiedScopeName = null;
+	while (node != null && ((qualifiedScopeName = node.getQualifiedScopeName()) == null)) {
+	    node = node.getParent();
+	}
+	
+	// Look for declarator definition if scope was found
+	if (qualifiedScopeName != null) {
+	    SymbolTable.Scope scope = masterSymbolTable.getScope(qualifiedScopeName);
+	    Object value = scope.lookupLocally(declarator);
+	    if (value instanceof Type) {
+		return (Type) value;
+	    }
+	}
+	
+	return null;	
     }
     
     private static ClassT getClassTypeFromFileScope(String fileScopeName, String qualifiedClassName) {
@@ -71,7 +99,6 @@ public class Translator {
 		}
 	    }
 	}
-	
 	return null;
     }
        
