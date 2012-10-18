@@ -49,7 +49,7 @@ public class Translator {
 	return conflictingDeclarator + "__" + unqualifiedClassName; // To do: make record of name change 
     }
     
-    public static MethodT resolveMethodType(MethodDeclarationTranslator method) {
+    public static MethodT resolveMethodType(TranslatorNode method) {
 	
 	String scopeName = method.getQualifiedScopeName();
 	SymbolTable.Scope scope = masterSymbolTable.getScope(scopeName);

@@ -72,9 +72,9 @@ public class ClassBodyTranslator extends TranslatorNode
 	    }
     	}
 
-	//finishFieldInitialization();
+	finishFieldInitialization();
 	finishMethodInitialization();
-	//finishConstructorInitialization();
+	//finishConstructorInitialization(); not fully implemented 
 	
 	// Report back with the modified data for use by any subclasses
 	Translator.reportInheritedData(inheritedData);
@@ -119,7 +119,7 @@ public class ClassBodyTranslator extends TranslatorNode
 	
 	// A null return value indicates a constructor
 	if (methodDecNode.get(2) == null) {
-	 //   initializeConstructorDeclaration(methodDecNode);
+	    initializeConstructorDeclaration(methodDecNode);
 	    return;
 	}
 	
@@ -218,20 +218,21 @@ public class ClassBodyTranslator extends TranslatorNode
 	if (constructorDeclarations.size() > 0) {
 	    constructor = constructorDeclarations.get(0);
 	} else {
-	    constructor = ConstructorDeclarationTranslator.newEmptyConstructor(Translator.getClassType()); // unimplemented
+	    constructor = ConstructorDeclarationTranslator.newEmptyConstructor(Translator.getClassType(), this); 
 	}
+	constructor.setInitializationList(initializationList); 
 	
 	List<ConstructorData> constructorTable = inheritedData.getConstructorTable(); 
 	
-	ConstructorData parentConstructorData = constructorTable.get(0);
-	BlockTranslator parentConstructorBody = parentConstructorData.getBodyTranslator();
-	
-	constructor.setInitializationList(initializationList); 
-	constructor.prependStatementBlock(parentConstructorBody); 
+	if (constructorTable.size() > 0) {
+	    ConstructorData parentConstructorData = constructorTable.get(0);
+	    BlockTranslator parentConstructorBody = parentConstructorData.getBodyTranslator();
+	    constructor.prependStatementBlock(parentConstructorBody); 
+	}
 	
 	ConstructorData constructorData = new ConstructorData(constructor.getMethodType(), constructor.getConstructorBody());
 	constructorTable.set(0, constructorData);
-	
+
 	inheritedData.setInitializationList(initializationList);
     }
 }
