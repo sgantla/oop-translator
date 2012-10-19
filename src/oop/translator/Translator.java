@@ -107,6 +107,7 @@ public class Translator {
     private static void firstPass(CompilationUnitPod currentPod) {
         CompilationUnitTranslator cppAstRoot = new CompilationUnitTranslator(null);
 
+        // TODO: What if it is a library class? Don't we still need to process it?
         if (!currentPod.isLibraryClass()) {
 	    Translator.setCurrentPod(currentPod);
 	    
