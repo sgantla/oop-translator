@@ -40,10 +40,17 @@ public class DependencyResolver {
 	runtime.initDefaultValues();
     }
 
+    /* The input directories here (which are passed to JavaAnalyzer via the Runtime) are used to determine 
+       where to search for external file dependencies, much like the -classpath flag for java and javac. It's 
+       very important that they be given in their canonical forms, or else is can disrupt the process of merging
+       all the symbol tables into one master table later. 
+    */
     public static Set<RawClassData> resolve(File file, List<File> inputDirectories) throws Exception {
 	List<File> dirList = runtime.getFileList(Runtime.INPUT_DIRECTORY);
 	dirList.clear();
-	dirList.addAll(inputDirectories);
+	for (File f : inputDirectories) {
+	    dirList.add(f.getCanonicalFile());
+	}
 
 	return resolveFileDependencies(file);
     }

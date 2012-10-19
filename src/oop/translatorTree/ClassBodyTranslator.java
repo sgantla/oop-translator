@@ -83,8 +83,7 @@ public class ClassBodyTranslator extends TranslatorNode
     private void initializeFieldDeclaration(Node fieldDecNode) {
     
 	// Split the java AST node into such that each one has only one declarator
-	List<Node> singleDeclarations = new ArrayList<Node>();
-	singleDeclarations.add(fieldDecNode);     // JavaAstUtil.splitFieldDeclarationByDeclarator(fieldDecNode), not yet implemented 
+	List<Node> singleDeclarations = JavaAstUtil.splitFieldDeclarationByDeclarator(fieldDecNode);
 	
 	List<FieldDeclarationTranslator> parentFieldDeclarations = inheritedData.getFieldDeclarations();
 	Set<String> parentDeclarators = new HashSet<String>();

@@ -125,8 +125,24 @@ public class JavaAstUtil {
     }
     
     public static List<Node> splitFieldDeclarationByDeclarator(Node n) {
-	return null;
+	Node modifiers = n.getNode(0);
+	Node type = n.getNode(1);
+	Node declarators = n.getNode(2);
 	
+	List<Node> fieldDeclarations = new ArrayList<Node>();
+	for (Node declarator : getChildrenByName(declarators, JavaAstUtil.NodeName.Declarator)) {
+	    Node newFieldDec = GNode.create(JavaAstUtil.NodeName.FieldDeclaration.toString());
+	    newFieldDec.add(modifiers);
+	    newFieldDec.add(type);
+	    
+	    Node newDeclarators = GNode.create(JavaAstUtil.NodeName.Declarators.toString());
+	    newDeclarators.add(declarator);
+	    
+	    newFieldDec.add(newDeclarators);
+	    fieldDeclarations.add(newFieldDec);
+	}
+	
+	return fieldDeclarations;
     }
     
     public static Node getChildByName(Node n, NodeName name) {

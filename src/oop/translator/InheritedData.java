@@ -13,7 +13,7 @@ import java.util.*;
 import java.io.*;
 
 public class InheritedData {
-    private List<MethodData> virtualMethodTable = new ArrayList<MethodData>();
+    private List<MethodData> virtualMethodTable = new ArrayList<MethodData>(); 
     private List<MethodData> staticMethodTable = new ArrayList<MethodData>();
     private List<ConstructorData> constructorTable = new ArrayList<ConstructorData>();
     private List<InitializationField> initializationList = new ArrayList<InitializationField>();
