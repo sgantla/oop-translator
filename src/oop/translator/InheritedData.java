@@ -52,6 +52,6 @@ public class InheritedData {
     }
     
     public InheritedData deepCopy() {
-	return this; // not yet implemented 
+	return this; // TODO: not yet implemented, do we need to implement clone() on all nodes?
     }
 }

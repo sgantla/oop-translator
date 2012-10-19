@@ -74,7 +74,7 @@ public class ClassBodyTranslator extends TranslatorNode
 
 	finishFieldInitialization();
 	finishMethodInitialization();
-	//finishConstructorInitialization(); not fully implemented 
+	// TODO: finishConstructorInitialization(); not fully implemented 
 	
 	// Report back with the modified data for use by any subclasses
 	Translator.reportInheritedData(inheritedData);
@@ -173,7 +173,7 @@ public class ClassBodyTranslator extends TranslatorNode
     }
     
     private void addStaticMethodReference(MethodData method) {
-	// We need to have the subclass point to a static method defined in a parent class. Not yet implemented.
+	// TODO: We need to have the subclass point to a static method defined in a parent class. Not yet implemented.
     }
     
     private void finishFieldInitialization() {

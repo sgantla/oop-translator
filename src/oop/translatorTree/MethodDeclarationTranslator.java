@@ -36,6 +36,7 @@ public class MethodDeclarationTranslator extends DeclarationTranslator
     }
    
     /* MethodDeclaration Members */
+    // TODO: fill these out
     public List<Modifier> getModifiers() {
 	return null;
     }
