@@ -103,6 +103,12 @@ public class Translator {
 	}
 	return null;
     }
+
+    // TODO: We will need to call this whenever we MAY have to make a cast. This will determine
+    // if a cast is necessary and return a cast expression that will solve the case. Note that
+    // with downcasts we need to add a throws clause.
+    public static Expression castCheck() {
+    }
        
     private static void firstPass(CompilationUnitPod currentPod) {
         CompilationUnitTranslator cppAstRoot = new CompilationUnitTranslator(null);
