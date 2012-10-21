@@ -1,6 +1,10 @@
-package oop.tree;
+package oop.tree.statements;
 
 public class ReturnStatement extends Statement {
 
-    Expression returnStatement;
+    Expression returnExpression;
+
+    public ReturnStatement(Expression expression) {
+        returnExpression = expression;
+    }
 }

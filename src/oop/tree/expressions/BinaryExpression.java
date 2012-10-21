@@ -16,6 +16,6 @@ package oop.tree;
 
 public abstract class BinaryExpression extends Expression {
 
-    Expression operand1;
-    Expression operand2;
+    Expression leftExpression;
+    Expression rightExpression;
 }

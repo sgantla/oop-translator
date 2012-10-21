@@ -1,19 +1,8 @@
-package oop.tree;
+package oop.tree.expressions;
 
-import java.util.ArrayList;
-import java.util.List;
+public class CallExpression extends Expression {
 
-/** Expression representing a method call.
- * 
- * Ex: System.out.println("Hello world");
- * name = println
- * argumentExpressions = {"Hello world"};
- * implicitExpression = System.out, a PrimaryIdentifier
- */
+    public CallExpression() {
 
-public class CallExpression extends UnaryExpression {
-
-    String name;
-    List<Expression> argumentExpressions;
-    Expression implicitExpression;          // doesn't always exist
+    }
 }

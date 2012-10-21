@@ -2,6 +2,6 @@ package oop.tree;
 
 public abstract class UnaryExpression extends Expression {
 
-    Expression operand;
+    Expression expression;
     String operator;
 }

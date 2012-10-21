@@ -2,10 +2,6 @@ package oop.tree.expressions;
 
 public class RelationalExpression extends BinaryExpression {
 
-    Expression leftExpression;
-    Expression rightExpression;
-    String operator;        // {<, >, <=, >=}
-
     public RelationalExpression(Expression leftExp, String operator, Expression rightExp)
     {
 
