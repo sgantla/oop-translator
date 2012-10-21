@@ -1,10 +1,10 @@
 package oop.tree.expressions;
 
-public class ClassLiteralLiteral {
+public class ClassLiteralExpression {
 
     Type type;
     
-    public ClassLiteralLiteral(Type type) {
+    public ClassLiteralExpression(Type type) {
         this.type = type;
     }
 }

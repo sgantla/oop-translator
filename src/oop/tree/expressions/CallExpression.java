@@ -1,18 +1,19 @@
 package oop.tree.expressions;
 
+import java.util.List;
+
 public class CallExpression extends Expression {
 
     // expression is opt
     TypeArgument typeArguments; //opt
     String name;
-    Argument arguments;
+    List<Expression> arguments;
 
-    public CallExpression(Expression expression, TypeArgument typeArguments, String name, Argument args) {
+    public CallExpression(Expression expression, TypeArgument typeArguments, String name, List<Expression> args) {
 
         this.expression = expression;
         this.typeArguments = typeArguments;
-        this.name = Translator.getName(name); // not sure how we're going to do this, assuming its going to take place
-                                              // in translator util function
+        this.name = name;
         this.arguments = args;
     }
 }
