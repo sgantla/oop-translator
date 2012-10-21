@@ -2,7 +2,7 @@ package oop.tree.expressions;
 
 public class BitwiseXorExpression extends BinaryExpression {
 
-    public BitwiseXorExpression(Expression left, Expression right) {
+    public BitwiseXorExpression(Expression left, String operator, Expression right) {
         leftExpression = left;
         rightExpression = right;
         operation = "^";

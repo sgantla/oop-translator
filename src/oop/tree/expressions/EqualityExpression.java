@@ -2,7 +2,7 @@ package oop.tree.expressions;
 
 public class EqualityExpression extends BinaryExpression {
 
-    public EqualityExpression(Expression left, Expression right) {
+    public EqualityExpression(Expression left, String operator, Expression right) {
        leftExpression = left;
        rightExpression = right;
        operator = "==";

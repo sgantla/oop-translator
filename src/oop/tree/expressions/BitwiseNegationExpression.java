@@ -2,7 +2,7 @@ package oop.tree.expressions;
 
 public class BitwiseNegationExpression extends UnaryExpression {
 
-    public BitwiseNegationExpression(Expression expression) {
+    public BitwiseNegationExpression(Expression expression, String operator) {
         this.expression = expression;
         operator = "~";
     }

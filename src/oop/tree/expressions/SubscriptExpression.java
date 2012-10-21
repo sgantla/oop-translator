@@ -2,7 +2,7 @@ package oop.tree.expressions;
 
 public class SubscriptExpression extends BinaryExpression {
 
-    public SubscriptExpression(Expression left, Expression right) {
+    public SubscriptExpression(Expression left, String operator, Expression right) {
         leftExpression = left;
         rightExpression = right;
         operator = "";

@@ -14,5 +14,10 @@ public class DeclarationOrStatement {
         this.declaration = null;
         this.statement = statement;
     }
+
+    public DeclarationOrStatement(Declaration declaration, Statement statement) {
+        this.declaration = declaration;
+        this.statement = statement;
+    }
 }
 

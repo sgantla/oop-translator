@@ -2,7 +2,7 @@ package oop.tree.expressions;
 
 public class AdditiveExpression extends BinaryExpression {
 
-    public AdditiveExpression(Expression left, Expression right) {
+    public AdditiveExpression(Expression left, String operator, Expression right) {
 
         operator = "+";
         leftExpression = left;
