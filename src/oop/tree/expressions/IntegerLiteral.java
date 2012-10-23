@@ -1,6 +1,6 @@
 package oop.tree.expressions;
 
-public class IntegerLiteral extends Expression {
+public class IntegerLiteral extends Literal {
 
     String value;
     

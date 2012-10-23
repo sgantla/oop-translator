@@ -2,7 +2,7 @@ package oop.tree.expressions;
 
 import java.util.List;
 
-public class TypeName {
+public class TypeName extends Node {
 
     String primitiveType;
     List<String> qualifiedIdentifiers;

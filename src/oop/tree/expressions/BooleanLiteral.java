@@ -1,6 +1,6 @@
 package oop.tree.expressions;
 
-public class BooleanLiteral {
+public class BooleanLiteral extends Node {
 
     String value;
     

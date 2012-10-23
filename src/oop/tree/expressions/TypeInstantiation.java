@@ -1,6 +1,6 @@
 package oop.tree.expressions;
 
-public class TypeInstantiation {
+public class TypeInstantiation extends Node {
 
     String typeInstantiation;
     TypeArgument typeArguments; //opt

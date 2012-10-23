@@ -2,7 +2,7 @@ package oop.tree.expressions;
 
 import java.util.List;
 
-public class TypeArgument {
+public class TypeArgument extends Node {
 
     List<Type> typeList;
 

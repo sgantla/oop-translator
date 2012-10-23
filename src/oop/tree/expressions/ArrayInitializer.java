@@ -2,7 +2,7 @@ package oop.tree.expressions;
 
 import java.util.List;
 
-public class ArrayInitializer {
+public class ArrayInitializer extends Node {
 
     List<Expression> expressions;
     List<Modifier> modifiers;

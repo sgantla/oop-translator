@@ -1,6 +1,6 @@
 package oop.tree.expressions;
 
-public class NullLiteral {
+public class NullLiteral extends Literal {
 
     String value;
     

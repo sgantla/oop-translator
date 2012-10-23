@@ -1,6 +1,6 @@
 package oop.tree.expressions;
 
-public class CharacterLiteral {
+public class CharacterLiteral extends Literal {
 
     String value;
     
