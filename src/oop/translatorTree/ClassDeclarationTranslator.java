@@ -56,7 +56,6 @@ implements ClassDeclaration {
 	/* TranslatorNode Members */
 	public void initialize(Node n) {
 
-
 		// Get extension (inheritance) info
 		Node extensionNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Extension);
 		if (extensionNode != null) {

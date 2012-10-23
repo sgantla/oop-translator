@@ -25,6 +25,7 @@ implements CompilationUnit {
 		List<String> usingDeclarations = new ArrayList<String>();
 		ClassDeclarationTranslator classDeclaration;
 	}
+	
 	private Input java = new Input();
 	private Output cpp = new Output();
 

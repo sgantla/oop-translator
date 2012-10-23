@@ -783,7 +783,42 @@ public class CppPrinter extends Visitor {
            return new TryCatchFinallyStatement(statement, catchClauseList, catchStatementList);*/
 	}
 
-
+	/** Visit the specified method node. */
+	public void visitMethodDeclaration(Node n) {
+		
+		// Print the modifiers
+		List<Modifier> modifiers = n.getList(0); 
+		/*private List<Modifier> modifiers;
+		private String methodName;
+		private Type returnType;
+		private List<FormalParameter> formalParameters;
+		private ThrowsClause throwsClause;
+		private BlockTranslator body;
+	    }*/
+	}
+	
+	public void visitFieldDeclaration(Node n) {
+		
+	}
+	
+	public void visitConstructorDeclaration(Node n) {
+	}
+	
+	public void visitClassDeclaration(Node n) {
+	}
+	
+	public void visitCompilationUnit(Node n) {
+		
+	}
+	
+	public void visitSystemOutPrint(Node n) {
+		// add #include<iostream.h> to top of c++ file 
+		pprinter.p("cout << ");
+		
+		// TODO: Make sure nested calls don't blow up here
+		pprinter.p(n.getNode(0)); 
+	}
+	
 	public static void main(String[] args) {
 		System.out.println("hi"); 
 	}
