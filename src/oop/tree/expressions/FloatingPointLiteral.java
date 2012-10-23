@@ -1,6 +1,6 @@
 package oop.tree.expressions;
 
-public class FloatingPointLiteral extends Expression {
+public class FloatingPointLiteral extends Literal {
 
     String value;
     

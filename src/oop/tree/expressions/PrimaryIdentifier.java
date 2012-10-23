@@ -1,9 +1,9 @@
-package oop.tree.expressions;
+package oop.tree;
 
-public class PrimaryIdentifier {
+public class PrimaryIdentifier extends UnaryExpression {
 
     String name;
-    
+
     public PrimaryIdentifier(String name) {
         this.name = name;
     }

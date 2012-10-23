@@ -1,6 +1,6 @@
 package oop.tree.expressions;
 
-public class ClassLiteralExpression {
+public class ClassLiteralExpression extends Literal {
 
     Type type;
     
