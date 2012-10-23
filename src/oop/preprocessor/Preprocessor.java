@@ -93,7 +93,7 @@ public class Preprocessor {
 	    }
 	}
 	
-	for (Iterator<String> scopeIter = newScope.nested(); scopeIter.hasNext();) {
+	/*for (Iterator<String> scopeIter = newScope.nested(); scopeIter.hasNext();) {
 	    String scopeName = scopeIter.next();
 	    if (masterScope.hasNested(scopeName)) {
 		mergeSymbolScopes(masterScope.getNested(scopeName), newScope.getNested(scopeName));
@@ -106,7 +106,7 @@ public class Preprocessor {
 		scope.parent = masterScope;
 		scope.requalify();
 	    }
-	}
+	}*/
     }
     
     private static List<File> getInputDirectories() throws Exception {

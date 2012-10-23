@@ -372,7 +372,7 @@ public class ExpressionTranslator extends Visitor
     public ShiftExpression visitShiftExpression(Node n) {
         Node leftExpressionNode = n.getNode(0);
         String operator = n.getString(1);
-        Node rightExpressionNode = n.getNode(0);
+        Node rightExpressionNode = n.getNode(0); // Shouldn't this be n.getNode(2);?
 
         Expression leftExpression = dispatch(leftExpressionNode);
         Expression rightExpression = dispatch(rightExpressionNode);

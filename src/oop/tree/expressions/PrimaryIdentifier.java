@@ -4,7 +4,7 @@ public class PrimaryIdentifier {
 
     String name;
     
-    public FloatingPointLiteral(String name) {
+    public PrimaryIdentifier(String name) {
         this.name = name;
     }
 }

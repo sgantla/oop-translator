@@ -11,10 +11,19 @@ public class CppCompilationUnit {
    */
 	
 	/* Fields */
-	//private final NamespaceDeclaration namespace; 
+	private final NamespaceDeclaration namespace; 
 	//private final List<UsingDeclaration> usingList; // not supported
-	//private final ClassDeclaration classDeclaration; 
+	private final ClassDeclaration classDeclaration; 
 	
 	/* Constructors */
-	public CppCompilationUnit() {}
+	public CppCompilationUnit() {	
+	}
+	
+	public NamespaceDeclaration getNamespace() {
+		return namespace; 
+	}
+		
+	public ClassDeclaration getClassDeclaration() {
+		return classDeclaration; 
+	}
 }

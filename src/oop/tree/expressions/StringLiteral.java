@@ -1,6 +1,6 @@
 package oop.tree.expressions;
 
-public class StringLiteral
+public class StringLiteral {
 
     String value;
     

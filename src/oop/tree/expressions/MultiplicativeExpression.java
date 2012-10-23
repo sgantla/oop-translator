@@ -5,7 +5,7 @@ public class MultiplicativeExpression extends BinaryExpression {
     public MultiplicativeExpression(Expression left, String operator, Expression right) {
         leftExpression = left;
         rightExpression = right;
-        operator = "*"
+        operator = "*";
     }
 
     public Type getReturnType() {

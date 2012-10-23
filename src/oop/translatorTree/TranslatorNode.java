@@ -13,26 +13,26 @@ import java.util.*;
 import java.io.*;
 
 public abstract class TranslatorNode {
-    private TranslatorNode parent;
-    private String qualifiedScopeName;
-    
-    public TranslatorNode(TranslatorNode parent) {
-	this.parent = parent;
-    }
-    
-    public TranslatorNode getParent() {
-	return parent;
-    }	
-    public void setParent(TranslatorNode parent) {
-	this.parent = parent;
-    }
+	private TranslatorNode parent;
+	private String qualifiedScopeName;
 
-    public String getQualifiedScopeName() {
-	return qualifiedScopeName;
-    }
-    public void setQualifiedScopeName(String qualifiedScopeName) {
-	this.qualifiedScopeName = qualifiedScopeName;
-    }
+	public TranslatorNode(TranslatorNode parent) {
+		this.parent = parent;
+	}
 
-    abstract public void initialize(Node n);
+	public TranslatorNode getParent() {
+		return parent;
+	}	
+	public void setParent(TranslatorNode parent) {
+		this.parent = parent;
+	}
+
+	public String getQualifiedScopeName() {
+		return qualifiedScopeName;
+	}
+	public void setQualifiedScopeName(String qualifiedScopeName) {
+		this.qualifiedScopeName = qualifiedScopeName;
+	}
+
+	abstract public void initialize(Node n);
 }
