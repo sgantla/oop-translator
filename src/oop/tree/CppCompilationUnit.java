@@ -17,6 +17,8 @@ public class CppCompilationUnit {
 	
 	/* Constructors */
 	public CppCompilationUnit() {	
+            namespace = new NamespaceDeclaration();
+            classDeclaration = new ClassDeclaration();
 	}
 	
 	public NamespaceDeclaration getNamespace() {

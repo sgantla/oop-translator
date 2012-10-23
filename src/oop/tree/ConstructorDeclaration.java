@@ -2,6 +2,7 @@ package oop.tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import oop.tree.interfaces.*;
 
 public class ConstructorDeclaration extends Declaration {
     List<Modifier> modifiers;
