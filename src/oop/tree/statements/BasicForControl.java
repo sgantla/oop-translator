@@ -11,9 +11,9 @@ public class BasicForControl extends ForControl {
     Expression expression; //opt, boolean expression for when to terminate    
     List<Expression> expressionList; //opt, expressions for incrementing variables
 
-    //TODO: Figure out constructors for this...
     public BasicForControl (List<Modifier> modifiers, Type type, List<Declarator> declarators, List<Expression> declaratorExpressionList,
             Expression expression, List<Expression> expressionList) {
+
         this.modifiers = modifiers;
         this.type = type;
         this.declarators = declarators;

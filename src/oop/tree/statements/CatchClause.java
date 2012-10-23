@@ -1,6 +1,6 @@
 package oop.tree.statements;
 
-public class CatchClause {
+public class CatchClause extends Statement {
 
     FormalParameter parameter;
     Statement statement;

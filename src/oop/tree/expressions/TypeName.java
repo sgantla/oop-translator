@@ -6,11 +6,11 @@ public class TypeName {
 
     String primitiveType;
     List<String> qualifiedIdentifiers;
-    List<TypeInstantiation> instantiatedTypes;
+    List<TypeInstantiation> typeInstantiations;
 
-    public TypeName(String primitiveType, List<String> qualifiedIdentifiers, List<TypeInstantiation> instantiatedTypes) {
+    public TypeName(String primitiveType, List<String> qualifiedIdentifiers, List<TypeInstantiation> typeInstantiations) {
         this.primitiveType = primitiveType;
         this.qualifiedIdentifiers = qualifiedIdentifiers;
-        this.instantiatedTypes = instantiatedTypes;
+        this.instantiatedTypes = typeInstantiations;
     }
 }
