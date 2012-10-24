@@ -1,4 +1,4 @@
-package oop.tree;
+package oop.tree.expressions;
 
 /**
  * Abstract representation of a binary expresion. 

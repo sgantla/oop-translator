@@ -1,6 +1,12 @@
 package oop.tree.expressions;
 
-public class StringLiteral Literal {
+import oop.tree.*;
+import oop.tree.interfaces.*;
+import oop.tree.statements.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+
+public class StringLiteral extends Literal {
 
     String value;
     

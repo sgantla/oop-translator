@@ -1,5 +1,11 @@
 package oop.tree.expressions;
 
+import oop.tree.*;
+import oop.tree.interfaces.*;
+import oop.tree.statements.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+
 public class ConditionalExpression extends TernaryExpression {
 
     public ConditionalExpression(Expression exp1, Expression exp2, Expression exp3) {

@@ -1,6 +1,11 @@
 package oop.tree.expressions;
 
-public class BasicCastExpression extends Expression {
+import oop.tree.*;
+import oop.tree.statements.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+
+public class BasicCastExpression extends UnaryExpression {
 
     TypeName typeName;
     int dimensions; //opt
@@ -11,5 +16,7 @@ public class BasicCastExpression extends Expression {
         this.typeName = typeName;
         this.dimensions = dimensions;
         this.expression = expression;
+
+        //TODO: returnType = ??
     }
 }

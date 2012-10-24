@@ -1,8 +1,13 @@
 package oop.tree.expressions;
 
+import oop.tree.*;
+import oop.tree.statements.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+
 import java.util.List;
 
-public class NewClassExpression extends Expression {
+public class NewClassExpression extends UnaryExpression {
 
     //opt expression
     TypeArgument typeArgument; //opt
@@ -17,5 +22,9 @@ public class NewClassExpression extends Expression {
         this.typeName = typeName;
         this.arguments = arguments;
         this.classBody = classBody;
+    }
+
+    public Type getReturnType() {
+        return returnType;
     }
 }
