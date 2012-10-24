@@ -9,7 +9,7 @@ import oop.translatorTree.*;
 import java.util.*;
 
 // TODO: do we need this to implement CppAstNode?
-public abstract class Expression extends Node {
+public abstract class Expression extends CNode {
     
     String operator;
     Type returnType;
