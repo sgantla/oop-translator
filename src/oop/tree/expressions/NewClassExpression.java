@@ -5,6 +5,8 @@ import oop.tree.statements.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
+import xtc.type.*;
+
 import java.util.List;
 
 public class NewClassExpression extends UnaryExpression {

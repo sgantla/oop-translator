@@ -6,6 +6,8 @@ import oop.tree.statements.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
+import xtc.type.*;
+
 public class ConditionalExpression extends TernaryExpression {
 
     public ConditionalExpression(Expression exp1, Expression exp2, Expression exp3) {

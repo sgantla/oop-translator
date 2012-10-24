@@ -6,6 +6,8 @@ import oop.tree.statements.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
+import xtc.type.*;
+
 public class CastExpression extends UnaryExpression {
 
     Type type;
