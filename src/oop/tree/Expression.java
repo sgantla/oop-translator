@@ -14,7 +14,7 @@ import java.io.*;
 
 public abstract class Expression extends Node {
 
-    String opeartor;
+    String operator;
     Type returnType;
     // this should be set in the constructor based on what the arguments are
     // ie: additive expression will return an int if its expressions both return ints

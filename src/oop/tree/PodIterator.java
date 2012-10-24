@@ -10,21 +10,17 @@ import java.io.*;
 
 /* Iterates through Pod Tree. Returns C++ AST root of each pod/class */
 public class PodIterator {
-
-	private static CompilationUnitPod rootPod;
-	private static CompilationUnitPod currentPod;
-	private static CompilationUnitTranslator cppAstRoot; 
+    private List<CompilationUnitPod> childCompilationUnitPods = new ArrayList<CompilationUnitPod>();
+	private List<CompilationUnitPod> remainingPodIterations = new List<CompilationUnitPod>();
 	
-	private List<CompilationUnitPod> childCompilationUnitPods = new ArrayList<CompilationUnitPod>();
-
 	public PodIterator(CompilationUnitPod root) {
-		traversePodTree(root); 
+		remainingPodIterations.add(root);
+		//traversePodTree(root); 			// Ensures traversal is successful
 	}
 
 	/** A depth-first recursive traversal of the Pod Tree */
 	public void traversePodTree(CompilationUnitPod currentPod) {
-		cppAstRoot = currentPod.getCppCompilationUnit(); 
-		//traverseCppAST(cppAstRoot); 
+		CompilationUnitTranslator cppAstRoot = currentPod.getCppCompilationUnit(); ; 
 		currentPod.print(); 
 		
 		List<CompilationUnitPod> children = currentPod.getChildren();
@@ -33,17 +29,26 @@ public class PodIterator {
 				child.print(); 
 				cppAstRoot = child.getCppCompilationUnit(); 
 				//System.out.println("Class Declarations : " + (cppAstRoot.getClassDeclaration()).toString()); 
-				//traverseCppAST(cppAstRoot); 
 				traversePodTree(child);
 			}
 		}
 	}
-
-	//public void traverseCppAST(CompilationUnitTranslator cppAstRoot) {
-		//currentCppAstNode = cppAstRoot; 
-		//System.out.println("Class Declarations : " + (cppAstRoot.getClassDeclaration()).toString()); 
-
-	//}
+	
+	public CompilationUnitPod next() {
+		try {
+			CompilationUnitPod nextPod = remainingPodIterations.remove(0);
+			remainingPodIterations.addAll(nextPod.getChildren();
+			return nextPod;
+		}
+		catch (IndexOutOfBoundsException e){
+			System.out.println("There are no more pods in this tree. Exiting Program..");
+			System.exit(0);				// TODO: This seems ugly. May cause issues. 
+		}
+	}
+	
+	public boolean hasNext() {
+		(remainingPodIterations.isEmpty())? return false : return true;
+	}
 	
 	public static void main(String[] args) throws Exception { 
 		//System.out.println("hi");
@@ -53,4 +58,3 @@ public class PodIterator {
 	}
 
 }
-

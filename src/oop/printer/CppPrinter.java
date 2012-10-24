@@ -18,9 +18,6 @@
  */
 package oop.printer; 
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
 import java.util.*; 
 import java.io.*; 
 
@@ -29,18 +26,16 @@ import xtc.lang.JavaFiveParser;
 import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
-import oop.tree.interfaces.*;
 import oop.tree.statements.*;
 import oop.tree.interfaces.*; 
+import oop.tree.expressions.*; 
 
 //import oop.tree.*; 
 
-import xtc.tree.Location;
-import xtc.tree.Locatable;
 import xtc.type.*;
 import xtc.tree.*; 
-
 import xtc.util.*;
+
 
 /**
  * A translator from (a subset of) Java to (a subset of) C++.
@@ -278,19 +273,6 @@ public class CppPrinter extends Visitor {
 		// Don't print anything out 
 	}
 
-	/** Visit the specified declaration node */
-	public void visitDeclaration(Node n) {
-
-	}
-
-	public void visitIfElseStatement(Node n) {
-
-	}
-
-	public void visitIfStatement(Node n) {
-
-	}
-
 	/** Visit the specified while statement node. */
 	public void visitWhileStatement(Node n) {
 		boolean nested = startStatement(STMT_ANY, n); 
@@ -380,7 +362,7 @@ public class CppPrinter extends Visitor {
 	public void visitAssignmentExpression(Node n) {
 		// Support?
 		pprinter.p(n.getNode(0)); 
-		
+
 		pprinter.p(' ').p(n.getString(1)).p(' ').p(n.getNode(2)); 
 	}
 
@@ -411,7 +393,7 @@ public class CppPrinter extends Visitor {
 
 	public void visitArrayInitializer(Node n) {
 	}
-	
+
 	/** Visit the basic cast expression node. */
 	public void visitBasicCastExpression(Node n) {
 		/*
@@ -682,11 +664,11 @@ public class CppPrinter extends Visitor {
 		if (null != n.get(2)) {
 			pprinter.p(' ').p(n.getNode(2)); 
 		}
-		
+
 		pprinter.p(')'); 
 		prepareNested(); 
 		pprinter.p(n.getNode(3)); 
-		
+
 		endStatement(nested); 
 		/*
 
@@ -783,44 +765,230 @@ public class CppPrinter extends Visitor {
            return new TryCatchFinallyStatement(statement, catchClauseList, catchStatementList);*/
 	}
 
+	public void visitFormalParameter(Node n) {
+		// Print modifier 
+		if (null != n.getNode(0)) {
+			visitModifier(n.getNode(0)); 
+		}
+		
+		// Print type 
+		pprinter.p(n.getNode(1)); 
+		
+		// Print name
+		pprinter.p(n.getString(2)); 
+	 
+	}
+	
 	/** Visit the specified method node. */
 	public void visitMethodDeclaration(Node n) {
+		Node modifiersNode = n.getNode(0); 
 		
 		// Print the modifiers
-		List<Modifier> modifiers = n.getList(0); 
-		/*private List<Modifier> modifiers;
-		private String methodName;
-		private Type returnType;
-		private List<FormalParameter> formalParameters;
-		private ThrowsClause throwsClause;
-		private BlockTranslator body;
+		for (Object m : modifiersNode) {
+			visitModifier((Node)m); 
+			pprinter.p(' '); 
+		}
+/*
+	     Node typeListNode = n.getList(0);
+
+	        List<Type> typeList = new ArrayList<Type>();
+	        for(Node tNode : typeListNode) {
+	            Type type = new GeneralVisitor().dispatch(tNode);
+	            typeList.add(type);
+	        }*/
+		
+		// If the return type has modifiers, print them
+		if (null != n.getNode(2)) {
+			Node returnTypeModifiers = n.getNode(2); 
+			for (Object returnTM : returnTypeModifiers) {
+				visitModifier((Node)returnTM); 
+				pprinter.p(' '); 
+			}
+		}
+		
+		// Print the return type 
+		pprinter.p(n.getNode(1)).p(' '); 
+
+		// Print the method's name
+		pprinter.p(n.getString(3)).p('('); 
+
+		// Print the parameters if there are any
+		if (null != n.getNode(4)) {
+			Node parameters = n.getNode(4); 
+			for (Object pNode : parameters) {
+				visitFormalParameter((Node)pNode); 
+				pprinter.p(", "); 
+			}
+		}
+		
+		pprinter.p(") "); 
+
+		// Print the throws clause if there is one 
+		if (null != n.getNode(5)) {
+			pprinter.p("throws ").p(n.getNode(4)); 
+		}
+		
+		// Print method body 
+		if (null != n.getNode(6)) {
+			visitBlock(n.getNode(6)); 
+		}
+
+		/*    List<Modifier> modifiers;
+    Type returnType;
+    List<Modifier> returnTypeModifiers;
+    String name;
+    List<FormalParameter> formalParameters;
+    //ThrowsClause throws;
+    Block methodBlock;
 	    }*/
 	}
+
+	public void visitBlock(Node n) {
+		Node statements = n.getNode(0); 
+		for (Object s : statements) {
+			visitStatement((Node)s); 
+		}
+	}
+	
+	/** Visit the specified statement */ 
+	public void visitStatement(Node n) {
+		// Figure out implementation with regards to visitBlock, because it's abstract
+	}
+	
+	public void visitModifier(Node n) {
+		pprinter.p(n.getNode(0)); 
+	}
+	
 	
 	public void visitFieldDeclaration(Node n) {
+		// Print the modifiers
+		if (null != n.getNode(0)) {
+			Node modifiersNode = n.getNode(0); 
+			
+			for (Object mNode : modifiersNode) {
+				visitModifier((Node)mNode);
+				pprinter.p(' '); 
+			}
+		}
 		
+		// Print the type
+		pprinter.p(n.getNode(1)).p(' '); 
+		
+		// Print the name 
+		pprinter.p(n.getString(2)).p(' '); 
+		
+		// Print the assignment expression if there is one.
+		if (null != n.getNode(3)) {
+			visitExpression(n.getNode(3)); 
+		}
+
+		/*    List<Modifier> modifiers;
+	    Type type;
+	    String name;
+	    Expression assignment; */
 	}
-	
+
 	public void visitConstructorDeclaration(Node n) {
+		// Print the modifiers
+		if (null != n.getNode(0)) {
+			Node modifiersNode = n.getNode(0); 
+			
+			for (Object mNode : modifiersNode) {
+				visitModifier((Node)mNode);
+				pprinter.p(' '); 
+			}
+		}
+		
+		// Print the name 
+		pprinter.p(n.getString(1)).p(' '); 
+		
+		// Print the parameters if there are any
+		if (null != n.getNode(2)) {
+			Node parameters = n.getNode(2); 
+			for (Object pNode : parameters) {
+				visitFormalParameter((Node)pNode); 
+				pprinter.p(", "); 
+			}
+		}
+		
+		// Not sure about throws?
+		
+		// Print method block 
+		if (null != n.getNode(5)) { // might be 6 if we include throws 
+			visitBlock(n.getNode(5)); 
+		}
+		
+		/*
+	    List<Modifier> modifiers;
+	    String name;
+	    List<FormalParameter> formalParameters;
+	    //ThrowsClause throws;
+	    List<InitializationListEntry> initializations;
+	    Block methodBlock;*/
+	}
+
+	public void visitClassDeclaration(Node n) {
+		// Print the modifiers
+		if (null != n.getNode(0)) {
+			Node modifiersNode = n.getNode(0); 
+			
+			for (Object mNode : modifiersNode) {
+				visitModifier((Node)mNode);
+				pprinter.p(' '); 
+			}
+		}
+		
+		// Print class name
+		pprinter.p(n.getString(1)); 
+		
+		// Print the class body 
+		visitClassBody(n.getNode(2)); 
+		
+	    /*List<Modifier> modifiers;
+	    String name;
+	    ClassBody classBody;
+
+	    VTable _vTable; // female
+	    ClassDeclaration _inheritsFrom;*/
+	}
+
+	public void visitClassBody(Node n) {
+		// Print declarations 
+		Node declarations = n.getNode(0); 
+		
+		for (Object d : declarations) {
+			visitDeclaration((Node)d); 
+		}
+	 //    List<Declaration> declarations;
+
 	}
 	
-	public void visitClassDeclaration(Node n) {
+	public void visitDeclaration(Node n)  {
+		// Figure out how to implement, since Declaration is abstract 
 	}
 	
 	public void visitCompilationUnit(Node n) {
+	}
+
+	public void visitPointerType(Node n) {
 		
+	}
+	
+	public void visitExpression(Node n) {
+		pprinter.p(n.getString(0)).p(' ').p(n.getNode(1)); 
 	}
 	
 	public void visitSystemOutPrint(Node n) {
 		// add #include<iostream.h> to top of c++ file 
 		pprinter.p("cout << ");
-		
+
 		// TODO: Make sure nested calls don't blow up here
 		pprinter.p(n.getNode(0)); 
 	}
-	
+
 	public static void main(String[] args) {
-		System.out.println("hi"); 
+		System.out.println("hello world"); 
+	
 	}
 
 }
