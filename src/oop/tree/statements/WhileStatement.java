@@ -1,5 +1,8 @@
 package oop.tree.statements;
 
+import oop.tree.*;
+import oop.tree.expressions.*;
+
 public class WhileStatement extends Statement {
 
     Expression expression;

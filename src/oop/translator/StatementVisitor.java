@@ -3,7 +3,8 @@ package oop.translator;
 import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
-import oop.tree.interfaces.*;
+import oop.tree.statements.*;
+import oop.tree.expressions.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -13,17 +14,17 @@ import java.util.*;
 import java.io.*;
 
 //GeneralVisitor needs: Modifier, FormalParameter, Type
-public class StatementTranslator extends Visitor
+public class StatementVisitor extends Visitor
 {
 
     public AssertStatement visitAssertStatement(Node n) {
         Node booleanExpressionNode = n.getNode(0);
         Node valueExpressionNode = n.getNode(1);
 
-        if (booleanExpressionNode != null)
-            Expression booleanExpression = new ExpressionVisitor().dispatch(booleanExpressionNode);
-        else
-            Expression booleanExpression = null;
+        if (booleanExpressionNode != null) {
+            Expression booleanExpression = new ExpressionVisitor().dispatch(booleanExpressionNode); }
+        else {
+            Expression booleanExpression = null; }
 
         Expression valueExpression = new ExpressionVisitor().dispatch(valueExpressionNode);
 
@@ -45,23 +46,23 @@ public class StatementTranslator extends Visitor
                 modifiersList.add(modifier);
             }
         }
-        else
-            modifiersList = null;
+        else {
+            modifiersList = null; }
 
-        if (typeNode != null)
-            Type type = new GeneralVisitor().dispatch(typeNode);
-        else
-            Type type = null;
+        if (typeNode != null) {
+            Type type = new GeneralVisitor().dispatch(typeNode); }
+        else {
+            Type type = null; }
 
-        List<Declarator> declaratorsList = new ArrayList<Declarator>();
+        List<Declaration> declaratorsList = new ArrayList<Declarator>();
         if (declaratorsNode != null) {
             for(Node dNode : declaratorsNode) {
-                Declarator declarator = new GeneralVisitor().dispatch(dNode);
+                Declaration declarator = new GeneralVisitor().dispatch(dNode);
                 declaratorsList.add(declarator);
             }
         }
-        else
-            declaratorsList = null;
+        else {
+            declaratorsList = null; }
 
         List<Expression> declaratorExpressionList = new ArrayList<Expression>();
         if (declaratorExpressionListNode != null) {
@@ -70,13 +71,13 @@ public class StatementTranslator extends Visitor
                 declaratorExpressionList.add(expression);
             }
         }
-        else
-            declaratorExpressionList = null;
+        else {
+            declaratorExpressionList = null; }
 
-        if (expressionNode != null)
-            Expression expression = new ExpressionVisitor().dispatch(expressionNode);
-        else
-            Expression expression = null;
+        if (expressionNode != null) {
+            Expression expression = new ExpressionVisitor().dispatch(expressionNode); }
+        else {
+            Expression expression = null; }
 
         List<Expression> expressionList = new ArrayList<Expression>();
         if (expressionListNode != null) {
@@ -85,8 +86,8 @@ public class StatementTranslator extends Visitor
                 expressionList.add(expression);
             }
         }
-        else
-            expressionList = null;
+        else {
+            expressionList = null; }
 
         return new BasicForControl(modifiersList, type, declaratorsList, declaratorExpressionList, expression, expressionList);
     }

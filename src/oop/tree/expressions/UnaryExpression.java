@@ -1,4 +1,4 @@
-package oop.tree;
+package oop.tree.expressions;
 
 public abstract class UnaryExpression extends Expression {
 

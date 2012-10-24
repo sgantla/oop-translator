@@ -1,16 +1,27 @@
 package oop.tree.expressions;
 
-public class NewArrayExpression extends Expression {
+import oop.tree.*;
+import oop.tree.interfaces.*;
+import oop.tree.statements.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+
+import java.util.List;
+
+public class NewArrayExpression extends UnaryExpression {
 
     TypeName typeName;
-    ConcreteDimensions concreteDimensions; //opt
+    List<Expression> concreteDimensions; //opt
     int dimensions; //opt
-    //expression is opt
 
-    public NewArrayExpression(TypeName typeName, ConcreteDimensions concreteDimension, int dimensions, Expression expression) {
+    public NewArrayExpression(TypeName typeName, List<Expression> concreteDimension, int dimensions, Expression expression) {
         this.typeName = typeName;
         this.concreteDimensions = concreteDimensions;
         this.dimensions = dimensions;
         this.expression = expression;
+    }
+
+    public Type getReturnType() {
+        return returnType;
     }
 }

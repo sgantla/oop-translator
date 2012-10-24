@@ -1,6 +1,12 @@
 package oop.tree.expressions;
 
-public class SuperExpression extends Expression {
+import oop.tree.*;
+import oop.tree.interfaces.*;
+import oop.tree.statements.*;
+import oop.translator.*;
+import oop.translatorTree.*;
+
+public class SuperExpression extends UnaryExpression {
 
     //expression opt
     
@@ -8,5 +14,9 @@ public class SuperExpression extends Expression {
     public SuperExpression(Expression expression) {
 
         this.expression = expression;
+    }
+
+    public Type getReturnType() {
+        return null;
     }
 }

@@ -1,4 +1,4 @@
-package oop.tree;
+package oop.tree.expressions;
 
 public class GBinaryExpression extends Expression {
 

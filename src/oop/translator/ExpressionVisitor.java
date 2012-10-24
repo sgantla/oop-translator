@@ -3,7 +3,8 @@ package oop.translator;
 import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
-import oop.tree.interfaces.*;
+import oop.tree.expressions.*;
+import oop.tree.statements.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -13,7 +14,7 @@ import java.util.*;
 import java.io.*;
 
 // TODO: Need a visit for Modifier
-public class ExpressionTranslator extends Visitor
+public class ExpressionVisitor extends Visitor
 {
 
     public AdditiveExpression visitAdditiveExpression(Node n) {
@@ -57,10 +58,12 @@ public class ExpressionTranslator extends Visitor
 
         TypeName typeName = dispatch(typeNameNode);
 
-        if(dimensionString != null && dimensionString != "")
+        if((dimensionString != null) && (!dimensionString.equals(""))) {
             int dimension = Integer.parseInt(dimensionString); 
-        else
+        }
+        else {
             int dimension = 0;
+        }
         
         Expression expression = dispatch(expressionNode);
 
@@ -127,15 +130,15 @@ public class ExpressionTranslator extends Visitor
         String name = n.getString(2);
         List<Node> argsNode = n.getList(3);
 
-        if (expressionNode != null)
-            Expression expression = dispatch(expressionNode);
-        else
-            Expression expression = null;
+        if (expressionNode != null) {
+            Expression expression = dispatch(expressionNode); }
+        else {
+            Expression expression = null; }
 
-        if (typeArgumentsNode != null)
-            TypeArgument typeArguments = dispatch(typeArgumentsNode);
-        else
-            TypeArgument typeArguments = null;
+        if (typeArgumentsNode != null) {
+            TypeArgument typeArguments = dispatch(typeArgumentsNode); }
+        else {
+            TypeArgument typeArguments = null; }
 
         String newName = Translator.getName(name); // i don't know how we're going to resolve mangled names, or how we're calling vmethods
 
@@ -223,7 +226,7 @@ public class ExpressionTranslator extends Visitor
     public IntegerLiteral visitIntegerLiteral(Node n) {
         String value = n.getString(0);
 
-        retun new IntegerLiteral(value);
+        return new IntegerLiteral(value);
     }
 
     public LogicalAndExpression visitLogicalAndExpression(Node n) {
@@ -270,26 +273,31 @@ public class ExpressionTranslator extends Visitor
 
     public NewArrayExpression visitNewArrayExpression(Node n) {
         Node typeNameNode = n.getNode(0);
-        Node concreteDimensionsNode = n.getNode(1);
+        Node concreteDimensionsNode = n.getList(1);
         String dimensionString = n.getString(2);
         Node expressionNode = n.getNode(3);
         
         TypeName typeName = dispatch(typeNameNode);
 
-        if(concreteDimensionsNode != null)
-            ConcreteDimension concreteDimensions = dispatch(concreteDimensionsNode);
-        else
-            ConcreteDimension concreteDimensions = null;
+        if(concreteDimensionsNode != null) {
+            List<Expression> concreteDimensions = new ArrayList<Expression>();
+            for(Node eNode : concreteDimensionsNode) {
+                Expression exp = dispatch(enode);
+                concreteDimensions.add(exp);
+            }
+        }
+        else {
+            List<Expression> concreteDimensions = null; }
 
-        if(dimensionNode != null)
-            int dimension = Integer.parseInt(dimensionString); 
-        else
-            int dimension = 0;
+        if(dimensionNode != null) {
+            int dimension = Integer.parseInt(dimensionString);  }
+        else {
+            int dimension = 0; }
 
-        if(expressionNode != null)
-            Expression expression = dispatch(expressionNode);
-        else
-            Expression expression = null;
+        if(expressionNode != null) {
+            Expression expression = dispatch(expressionNode); }
+        else {
+            Expression expression = null; }
 
         return new NewArrayExpression(typeName, concreteDimensions, dimension, expression);
     }
@@ -302,15 +310,15 @@ public class ExpressionTranslator extends Visitor
         Node argumentsNode = n.getList(3);
         Node classBodyNode = n.getNode(4);
 
-        if(expressionNode != null)
-            Expression expression = dispatch(expressionNode);
-        else
-            Expression expression = null;
+        if(expressionNode != null) {
+            Expression expression = dispatch(expressionNode); }
+        else {
+            Expression expression = null; }
 
-        if(typeArgumentNode != null)
-            TypeArgument typeArgument = dispatch(typeArgumentNode);
-        else
-            TypeArgument typeArgument = null;
+        if(typeArgumentNode != null) {
+            TypeArgument typeArgument = dispatch(typeArgumentNode); }
+        else {
+            TypeArgument typeArgument = null; }
 
         TypeName typeName = dispatch(typeNameNode);
 
@@ -320,10 +328,10 @@ public class ExpressionTranslator extends Visitor
             arguments.add(argument);
         }
 
-        if(classBodyNode != null)
-            ClassBody classBody = dispatch(classBodyNode);
-        else
-            ClassBody classBody = null;
+        if(classBodyNode != null) {
+            ClassBody classBody = dispatch(classBodyNode); }
+        else {
+            ClassBody classBody = null; }
 
         return new NewClassExpression(expression, typeArgument, typeName, arguments, classBody);
     }
@@ -421,10 +429,10 @@ public class ExpressionTranslator extends Visitor
         String typeInstantiation = n.getString(0);
         Node typeArgumentsNode = n.getNode(1);
 
-        if (typeArgumentsNode != null)
-            TypeArguments typeArguments = dispatch(typeArgumentsNode);
-        else
-            TypeArguments typeArguments = null;
+        if (typeArgumentsNode != null) {
+            TypeArguments typeArguments = dispatch(typeArgumentsNode); }
+        else {
+            TypeArguments typeArguments = null; }
 
         return new TypeInstantiation(typeInstantiation, typeArguments);
     }

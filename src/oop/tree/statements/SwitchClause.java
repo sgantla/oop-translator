@@ -3,14 +3,8 @@ package oop.tree.statements;
 import java.util.List;
 import java.util.ArrayList;
 
-import oop.preprocessor.*;
-import oop.translator.*;
-import oop.translatorTree.*;
-import oop.tree.interfaces.*;
-
-import xtc.tree.*;
-import xtc.type.*;
-import xtc.util.*;
+import oop.tree.expressions.*;
+import oop.tree.*;
 
 import java.util.*;
 import java.io.*;

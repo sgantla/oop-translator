@@ -1,9 +1,8 @@
-package oop.tree;
+package oop.translator;
 
-public class Modifier {
-    enum ModifierEnum {
-        PUBLIC,
-        PRIVATE,
-        STATIC;
-    }
+public enum Modifier {
+    PUBLIC,
+    PRIVATE,
+    STATIC,
+    CONST;
 }

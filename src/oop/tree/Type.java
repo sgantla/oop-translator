@@ -1,5 +1,5 @@
 package oop.tree;
 
-public abstract class Type {
+public abstract class Type extends Node {
     int dimension;
 }

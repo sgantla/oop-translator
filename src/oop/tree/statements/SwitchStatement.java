@@ -1,16 +1,9 @@
 package oop.tree.statements;
 
-import oop.preprocessor.*;
-import oop.translator.*;
-import oop.translatorTree.*;
-import oop.tree.interfaces.*;
-
+import oop.tree.expressions.*;
 import xtc.tree.*;
-import xtc.type.*;
-import xtc.util.*;
 
-import java.util.*;
-import java.io.*;
+import java.util.List;
 
 public class SwitchStatement extends Statement {
 
