@@ -16,9 +16,9 @@ import java.io.*;
 //GeneralVisitor needs: Modifier, FormalParameter, Type
 public class GeneralVisitor extends Visitor
 {
-    public Statement dispatch(Node n)
+    public Object visit(Node n)
     {
         Object o = super.dispatch(n);
-        return (Statement) o;
+        return o;
     }
 }

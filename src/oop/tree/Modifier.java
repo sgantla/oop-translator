@@ -1,4 +1,4 @@
-package oop.translator;
+package oop.tree;
 
 public enum Modifier {
     PUBLIC,

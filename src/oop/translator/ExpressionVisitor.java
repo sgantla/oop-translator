@@ -5,9 +5,9 @@ import oop.translator.*;
 import oop.translatorTree.*;
 import oop.tree.expressions.*;
 import oop.tree.statements.*;
+import oop.tree.*;
 
 import xtc.tree.*;
-import xtc.type.*;
 import xtc.util.*;
 
 import java.util.*;
@@ -23,8 +23,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightNode = n.getNode(2);
 
-        Expression leftExp = dispatch(leftNode);
-        Expression rightExp = dispatch(rightNode);
+        Expression leftExp = visit(leftNode);
+        Expression rightExp = visit(rightNode);
 
         return new AdditiveExpression(leftExp, operator, rightExp);
     }
@@ -37,13 +37,13 @@ public class ExpressionVisitor extends Visitor
 
         List<Expression> expressions = new ArrayList<Expression>();
         for(Node eNode : expressionsNode) {
-            Expression expression = dispatch(eNode);
+            Expression expression = visit(eNode);
             expressions.add(expression);
         }
 
         List<Modifier> modifiers = new ArrayList<Modifier>();
         for(Node mNode : modifiersNode) {
-            Modifier modifier = new GeneralVisitor().dispatch(mNode);
+            Modifier modifier = new GeneralVisitor().visit(mNode);
             modifiers.add(modifier);
         }
 
@@ -56,7 +56,7 @@ public class ExpressionVisitor extends Visitor
         Node dimensionString = n.getString(1);
         Node expressionNode = n.getNode(2);
 
-        TypeName typeName = dispatch(typeNameNode);
+        TypeName typeName = visit(typeNameNode);
 
         if((dimensionString != null) && (!dimensionString.equals(""))) {
             int dimension = Integer.parseInt(dimensionString); 
@@ -65,7 +65,7 @@ public class ExpressionVisitor extends Visitor
             int dimension = 0;
         }
         
-        Expression expression = dispatch(expressionNode);
+        Expression expression = visit(expressionNode);
 
         return new BasicCastExpression(typeName, dimension, expression);
     }
@@ -76,8 +76,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightNode = n.getNode(2);
 
-        Expression leftExp = dispatch(leftNode);
-        Expression rightExp = dispatch(rightNode);
+        Expression leftExp = visit(leftNode);
+        Expression rightExp = visit(rightNode);
 
         return new BitwiseAndExpression(leftExp, operator, rightExp);
     }
@@ -87,7 +87,7 @@ public class ExpressionVisitor extends Visitor
         Node node = n.getNode(0);
         String operator = n.getString(1);
 
-        Expression expression = dispatch(node);
+        Expression expression = visit(node);
 
         return new BitwiseNegationExpression(node, operator);
     }
@@ -98,8 +98,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightNode = n.getNode(2);
 
-        Expression leftExp = dispatch(leftNode);
-        Expression rightExp = dispatch(rightNode);
+        Expression leftExp = visit(leftNode);
+        Expression rightExp = visit(rightNode);
 
         return new BitwiseOrExpression(leftExp, operator, rightExp);
     }
@@ -110,8 +110,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightNode = n.getNode(2);
 
-        Expression leftExp = dispatch(leftNode);
-        Expression rightExp = dispatch(rightNode);
+        Expression leftExp = visit(leftNode);
+        Expression rightExp = visit(rightNode);
 
         return new BitwiseXorExpression(leftExp, operator, rightExp);
     }
@@ -131,12 +131,12 @@ public class ExpressionVisitor extends Visitor
         List<Node> argsNode = n.getList(3);
 
         if (expressionNode != null) {
-            Expression expression = dispatch(expressionNode); }
+            Expression expression = visit(expressionNode); }
         else {
             Expression expression = null; }
 
         if (typeArgumentsNode != null) {
-            TypeArgument typeArguments = dispatch(typeArgumentsNode); }
+            TypeArgument typeArguments = visit(typeArgumentsNode); }
         else {
             TypeArgument typeArguments = null; }
 
@@ -147,7 +147,7 @@ public class ExpressionVisitor extends Visitor
         List<Expression> arguments = new ArrayList<Expression>();
         if(argsNode != null) {
             for(Node eNode : argsNode) {
-                Expression expression = dispatch(eNode);
+                Expression expression = visit(eNode);
                 arguments.add(expression);
             }
         }
@@ -160,8 +160,8 @@ public class ExpressionVisitor extends Visitor
         Node expressionNode = n.getNode(0);
         Node typeNode = n.getNode(1);
 
-        Expression expression = dispatch(expressionNode);
-        Type type = new GeneralVisitor().dispatch(typeNode);
+        Expression expression = visit(expressionNode);
+        Type type = new GeneralVisitor().visit(typeNode);
 
         return new CastExpression(expression, type);
     }
@@ -177,7 +177,7 @@ public class ExpressionVisitor extends Visitor
 
         Node node = n.getNode(0);
 
-        Type type = new GeneralVisitor().dispatch(node);
+        Type type = new GeneralVisitor().visit(node);
         return new ClassLiteralExpression(type);
     }
     
@@ -186,9 +186,9 @@ public class ExpressionVisitor extends Visitor
         Node expressionNode2 = n.getNode(1);
         Node expressionNode3 = n.getNode(2);
 
-        Expression expression1 = dispatch(expressionNode1);
-        Expression expression2 = dispatch(expressionNode2);
-        Expression expression3 = dispatch(expressionNode3);
+        Expression expression1 = visit(expressionNode1);
+        Expression expression2 = visit(expressionNode2);
+        Expression expression3 = visit(expressionNode3);
 
         return new ConditionalExpression(expression1, expression2, expression3);
     }
@@ -199,8 +199,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightNode = n.getNode(2);
         
-        Expression leftExpression = dispatch(leftNode);
-        Expression rightExpression = dispatch(rightNode);
+        Expression leftExpression = visit(leftNode);
+        Expression rightExpression = visit(rightNode);
 
         return new EqualityExpression(leftExpression, operator, rightExpression);
     }
@@ -217,8 +217,8 @@ public class ExpressionVisitor extends Visitor
         Node expressionNode = n.getNode(0);
         Node typeNode = n.getNode(1);
 
-        Expression expression = dispatch(expressionNode);
-        Type type = new GeneralVisitor().dispatch(typeNode);
+        Expression expression = visit(expressionNode);
+        Type type = new GeneralVisitor().visit(typeNode);
 
         return new InstanceOfExpression(expression, type);
     }
@@ -234,8 +234,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightNode = n.getNode(2);
 
-        Expression leftExpression = dispatch(leftNode);
-        Expression rightExpression = dispatch(rightNode);
+        Expression leftExpression = visit(leftNode);
+        Expression rightExpression = visit(rightNode);
 
         return new LogicalAndExpression(leftExpression, operator, rightExpression);
     }
@@ -244,7 +244,7 @@ public class ExpressionVisitor extends Visitor
         Node expressionNode = n.getNode(0);
         String operator = n.getString(1);
 
-        Expression expression = dispatch(expressionNode);
+        Expression expression = visit(expressionNode);
 
         return new LogicalNegationExpression(expression, operator);
     }
@@ -254,8 +254,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightNode = n.getNode(2);
 
-        Expression leftExpression = dispatch(leftNode);
-        Expression rightExpression = dispatch(rightNode);
+        Expression leftExpression = visit(leftNode);
+        Expression rightExpression = visit(rightNode);
 
         return new LogicalOrExpression(leftExpression, operator, rightExpression);
     }
@@ -265,8 +265,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightNode = n.getNode(2);
 
-        Expression leftExpression = dispatch(leftNode);
-        Expression rightExpression = dispatch(rightNode);
+        Expression leftExpression = visit(leftNode);
+        Expression rightExpression = visit(rightNode);
 
         return new MultiplicationExpression(leftExpression, operator, rightExpression);
     }
@@ -277,12 +277,12 @@ public class ExpressionVisitor extends Visitor
         String dimensionString = n.getString(2);
         Node expressionNode = n.getNode(3);
         
-        TypeName typeName = dispatch(typeNameNode);
+        TypeName typeName = visit(typeNameNode);
 
         if(concreteDimensionsNode != null) {
             List<Expression> concreteDimensions = new ArrayList<Expression>();
             for(Node eNode : concreteDimensionsNode) {
-                Expression exp = dispatch(enode);
+                Expression exp = visit(enode);
                 concreteDimensions.add(exp);
             }
         }
@@ -295,7 +295,7 @@ public class ExpressionVisitor extends Visitor
             int dimension = 0; }
 
         if(expressionNode != null) {
-            Expression expression = dispatch(expressionNode); }
+            Expression expression = visit(expressionNode); }
         else {
             Expression expression = null; }
 
@@ -311,25 +311,25 @@ public class ExpressionVisitor extends Visitor
         Node classBodyNode = n.getNode(4);
 
         if(expressionNode != null) {
-            Expression expression = dispatch(expressionNode); }
+            Expression expression = visit(expressionNode); }
         else {
             Expression expression = null; }
 
         if(typeArgumentNode != null) {
-            TypeArgument typeArgument = dispatch(typeArgumentNode); }
+            TypeArgument typeArgument = visit(typeArgumentNode); }
         else {
             TypeArgument typeArgument = null; }
 
-        TypeName typeName = dispatch(typeNameNode);
+        TypeName typeName = visit(typeNameNode);
 
         List<Expression> arguments = new ArrayList<Expression>();
         for(Node aNode : argumentsNode) {
-            Expression argument = dispatch(aNode);
+            Expression argument = visit(aNode);
             arguments.add(argument);
         }
 
         if(classBodyNode != null) {
-            ClassBody classBody = dispatch(classBodyNode); }
+            ClassBody classBody = visit(classBodyNode); }
         else {
             ClassBody classBody = null; }
 
@@ -344,7 +344,7 @@ public class ExpressionVisitor extends Visitor
         Node expressionNode = n.getNode(0);
         String operator = n.getString(1);
 
-        Expression expression = dispatch(expressionNode);
+        Expression expression = visit(expressionNode);
 
         return new PostFixExpression(expression, operator);
     }
@@ -362,8 +362,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightNode = n.getNode(2);
         
-        Expression leftExp = dispatch(leftNode);
-        Expression rightExp = dispatch(rightNode);
+        Expression leftExp = visit(leftNode);
+        Expression rightExp = visit(rightNode);
 
         return new RelationalExpression(leftExp, operator, rightExp);
     }
@@ -372,7 +372,7 @@ public class ExpressionVisitor extends Visitor
         Node expressionNode = n.getNode(0);
         String operator = n.getString(1);
 
-        Expression expression = dispatch(expressionNode);
+        Expression expression = visit(expressionNode);
 
         return new SelectionExpression(expression, operator);
     }
@@ -382,8 +382,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightExpressionNode = n.getNode(0); // Shouldn't this be n.getNode(2);?
 
-        Expression leftExpression = dispatch(leftExpressionNode);
-        Expression rightExpression = dispatch(rightExpressionNode);
+        Expression leftExpression = visit(leftExpressionNode);
+        Expression rightExpression = visit(rightExpressionNode);
 
         return new ShiftExpression(leftExpression, operator, rightExpression);
     }
@@ -399,8 +399,8 @@ public class ExpressionVisitor extends Visitor
         String operator = n.getString(1);
         Node rightExpressionNode = n.getNode(0);
 
-        Expression leftExpression = dispatch(leftExpressionNode);
-        Expression rightExpression = dispatch(rightExpressionNode);
+        Expression leftExpression = visit(leftExpressionNode);
+        Expression rightExpression = visit(rightExpressionNode);
 
         return new SubscriptExpression(leftExpression, operator, rightExpression);
     }
@@ -408,7 +408,7 @@ public class ExpressionVisitor extends Visitor
     public SuperExpression visitSuperExpression(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = dispatch(expressionNode);
+        Expression expression = visit(expressionNode);
 
         return new SuperExpression(expression);
     }
@@ -418,7 +418,7 @@ public class ExpressionVisitor extends Visitor
 
         List<Type> typeList = new ArrayList<Type>();
         for(Node tNode : typeListNode) {
-            Type type = new GeneralVisitor().dispatch(tNode);
+            Type type = new GeneralVisitor().visit(tNode);
             typeList.add(type);
         }
 
@@ -429,39 +429,44 @@ public class ExpressionVisitor extends Visitor
         String typeInstantiation = n.getString(0);
         Node typeArgumentsNode = n.getNode(1);
 
-        if (typeArgumentsNode != null) {
-            TypeArguments typeArguments = dispatch(typeArgumentsNode); }
-        else {
-            TypeArguments typeArguments = null; }
+        TypeArgument typeArguments = null;
+        if (typeArgumentsNode != null)
+            typeArguments = visit(typeArgumentsNode);
 
         return new TypeInstantiation(typeInstantiation, typeArguments);
     }
 
     public TypeName visitTypeName(Node n) {
         String primitiveType = n.getString(0);
-        Node qualifiedIdentifiersNode = n.getList(1);
-        Node typeInstantiationsNode = n.getList(2);
+        List<Node> qualifiedIdentifiersNode = null; // n.getList(1);
+        List<Node> typeInstantiationsNode = null; // n.getList(2);
 
         List<String> qualifiedIdentifiers = new ArrayList<String>();
-        for(Node tNode : typeListNode) {
+        for(Node tNode : qualifiedIdentifiersNode) {
             String identifier = tNode.getString(0);
-            typeList.add(identifier);
+            qualifiedIdentifiers.add(identifier);
         }
 
         List<TypeInstantiation> typeInstantiations = new ArrayList<TypeInstantiation>();
-        for(Node tNode : typeListNode) {
-            TypeInstantiation identifier = tNode.getString(0);
+        for(Node tNode : typeInstantiationsNode) {
+            TypeInstantiation identifier = visit(tNode);
             typeInstantiations.add(identifier);
         }
 
         return new TypeName(primitiveType, qualifiedIdentifiers, typeInstantiations);
     }
 
-
-    public Expression dispatch(Node n)
+    public Expression visit(Node n)
     {
         Object o = super.dispatch(n);
         return (Expression) o;
     }
-
+    
+    /*
+    public Expression dispatch(Node n)
+    {
+        Object o = super.visit(n);
+        return (Expression) o;
+    }
+    */
 }
