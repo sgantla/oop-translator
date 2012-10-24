@@ -282,47 +282,68 @@ public class CppPrinter extends Visitor {
 		endStatement(nested); 
 	}
 
-	/* Visit the specified SwitchClause
+	/** Visit the specified declaration or statement node. */
+	public void visitDeclarationOrStatement(Node n) {
+		// If the specified node is a declaration, print it
+		if (null != n.getNode(0)) {
+			pprinter.p(n.getString(0)).pln(';'); 
+		}
+		
+		// If the specified node is a statement, print it
+		else {
+			pprinter.p(n.getString(1)).pln(';'); 
+		}
+		
+		/* 
+    	Declaration declaration;
+    	Statement statement;*/
+	}
+	
+	/** Visit the specified switch clause statement node.  */
     public void visitSwitchClause(Node n) {
-    	/*Node expressionNode = n.getNode(0); 
-        Pair<Node> caseClauseStatementNode = n.getList(1);
-        Pair<Node> defaultClauseNode = n.getList(2);
-
-        int caseNumber = 1; 
-        for(Node dNode : caseClauseStatementNode) {
-        	DeclarationOrStatement declaration = dispatch(dNode); 
-        	pprinter.p("case: ").p(caseNumber).p(":").indent().pln(declaration);
-        	pprinter.p("break;"); 
-        	caseNumber ++; 
+    	// Print the caseClauseExpression
+    	pprinter.p(n.getNode(0)).pln(':'); 
+    	
+        
+        // If the switch clause is not the default clause
+        if (null != n.getNode(0)) {
+            Node caseClauseStatements = n.getNode(1); 
+            for (Object ccs : caseClauseStatements) {
+            	visitDeclarationOrStatement((Node)ccs);
+            }	
+            pprinter.pln("break;"); 
         }
-
-        for(Node dNode : defaultClauseNode) {
-        	DeclarationOrStatement declaration = dispatch(dNode); 
-        	pprinter.p("default: ").pln(declaration);
-        	pprinter.p("break;"); 
+        
+        // If the switch clause is the default clause
+        else {
+        	pprinter.pln("default:"); 
+        	Node defaultClause = n.getNode(2); 
+        	for (Object dc : defaultClause) {
+        		visitDeclarationOrStatement((Node)dc); 
+        	}
+        	pprinter.pln("break;"); 
         }
-
-        pprinter.pln('}'); /
-
-    }*/
+        
+        /*  Expression caseClauseExpression;
+    		List<DeclarationOrStatement> caseClauseStatements;
+    		List<DeclarationOrStatement> defaultClause;*/
+    }
 
 	/** Visit the specified switch statement node. */ 
 	public void visitSwitchStatement(Node n) {
-		/*boolean nested = startStatement(STMT_ANY, n); 
+		boolean nested = startStatement(STMT_ANY, n); 
 		pprinter.indent().p("switch (").p(n.getNode(0)).p(") {"); 
 		prepareNested(); 
 
-        Node expressionNode = n.getNode(0);
-        List<Node> switchClauseListNode = n.getList(1);
-
-        List<SwitchClause> switchClauseList = new ArrayList<SwitchClause>();
-        for(Node sNode: switchClauseListNode) {
-        	SwitchClause switchClause = dispatch(sNode);
-            SwitchClauseList.add(switchClause);
+        Node switchClauseListNode = n.getNode(1);
+        int switchCount = 1; 
+        for(Object sNode: switchClauseListNode) {
+        	pprinter.p("case ");
+        	visitSwitchClause((Node)sNode); 
+        	pprinter.pln("break;");
+        	switchCount ++; 
         }
-
-        SwitchStatement s = new SwitchStatement(expression, switchClauseList);
-		 */
+        pprinter.p('}'); 
 	}
 
 	/** Visit the specified continue statement node. */ 
@@ -391,11 +412,26 @@ public class CppPrinter extends Visitor {
 		endExpression(prec1); 
 	}
 
+	/** Visit the specified array initializer node. */
 	public void visitArrayInitializer(Node n) {
+		// Print expressions
+		Node expressions = n.getNode(0); 
+		for (Object e : expressions) {
+			visitExpression((Node)e); 
+		}
+		
+		// Print modifier
+		Node modifiers = n.getNode(1); 
+		for (Object m : modifiers) {
+			visitModifier((Node)m); 
+		}
+		/*    List<Expression> expressions;
+    	List<Modifier> modifiers;*/
 	}
 
 	/** Visit the basic cast expression node. */
 	public void visitBasicCastExpression(Node n) {
+		// How does this work?
 		/*
 		Node typeNameNode = n.getNode(0);
         Node dimensionString = n.getString(1);
@@ -421,8 +457,25 @@ public class CppPrinter extends Visitor {
 		pprinter.p('(').p(n.getNode(1)).p(')'); 
 	}
 
-
+	/** Visit the specified call expression node. */
 	public void visitCallExpression(Node n) { 
+		// Print type arguments
+		pprinter.p(n.getNode(0)); 
+		
+		// Print name
+		pprinter.p(n.getString(1)); 
+		
+		// Print expressions, if there are any 
+		if (null != n.getNode(2)) {
+			Node expressionArguments = n.getNode(2); 
+			for (Object eNode : expressionArguments) {
+				visitExpression((Node)eNode); 
+			}
+		}
+		   // expression is opt
+	    /*TypeArgument typeArguments; //opt
+	    String name;
+	    List<Expression> arguments;*/ 
 	}
 
 	/** Visit the specified cast expression node. */
@@ -438,6 +491,9 @@ public class CppPrinter extends Visitor {
 
 	/** Visit the specified class literal expression node. */
 	public void visitClassLiteralExpression(Node n) {
+		pprinter.p(n.getNode(0)); 
+		//    Type type;
+
 	}
 
 	/** Visit the specified conditional expression node */ 
@@ -496,11 +552,30 @@ public class CppPrinter extends Visitor {
 
 	/** Visit the specified new array expression node. */ 
 	public void  visitNewArrayExpression(Node n) {
-		Node typeNameNode = n.getNode(0);
-		Node concreteDimensionsNode = n.getNode(1);
-		String dimensionString = n.getString(2);
-		Node expressionNode = n.getNode(3);
-
+		// Print type of array 
+		pprinter.p(n.getNode(0)); 
+		
+		// Name of array???
+		
+		// If the array's size is not defined, so its contents are explicitly declared 
+		if (null != n.getNode(1)) {
+			pprinter.p("[] = { "); 
+			Node concreteDimensions = n.getNode(1); 
+			for (Object cd : concreteDimensions) {
+				visitExpression((Node)cd); 
+				pprinter.p(", "); // This prints a comma after the last array member, which shouldnt happen
+			}
+			pprinter.p("};"); 
+		}
+			
+		// If the array's size is defined 
+		if (null != n.getNode(2)) {
+			pprinter.p('[').p(n.getNode(2)).pln("];"); 
+		}
+		
+	    /*TypeName typeName;
+	    List<Expression> concreteDimensions; //opt
+	    int dimensions; //opt*/
 	}
 
 	/** Visit the specified relational expression node. */ 
@@ -558,59 +633,25 @@ public class CppPrinter extends Visitor {
 		// Support?
 	}
 
-	public void visitFloatingConstant(Node n) {
-	}
-
-	public void visitIntegerConstant(Node n) {
-	}
-
-	public void visitCharacterConstant(Node n) {
-	}
-
-	public void visitStringConstant(Node n) {
-	}
-
 	/** Visit the specified subscript expression node. */
 	public void visitSubscriptExpression(Node n) {
+		// Not supported 
 	}
 
 	/** Visit the specified subscript expression node. */
 	public void visitNewClassExpression(Node n) {
-
-		/* Node expressionNode = n.getNode(0);
-        Node typeArgumentNode = n.getNode(1);
-        Node typeNameNode = n.getNode(2);
-        Node argumentsNode = n.getList(3);
-        Node classBodyNode = n.getNode(4);
-
-        if(expressionNode != null)
-            Expression expression = dispatch(expressionNode);
-        else
-            Expression expression = null;
-
-        if(typeArgumentNode != null)
-            TypeArgument typeArgument = dispatch(typeArgumentNode);
-        else
-            TypeArgument typeArgument = null;
-
-        TypeName typeName = dispatch(typeNameNode);
-
-        List<Expression> arguments = new ArrayList<Expression>();
-        for(Node aNode : argumentsNode) {
-            Expression argument = dispatch(aNode);
-            arguments.add(argument);
-        }
-
-        if(classBodyNode != null)
-            ClassBody classBody = dispatch(classBodyNode);
-        else
-            ClassBody classBody = null;
-
-        return new NewClassExpression(expression, typeArgument, typeName, arguments, classBody);*/
+		// Not sure how this works
+		
+	    //opt expression
+	    /*TypeArgument typeArgument; //opt
+	    TypeName typeName;
+	    List<Expression> arguments*/
+	    ClassBody classBody;  //opt
 	}
 
 	/** Visit the specified selection expression node. */
 	public void visitSelectionExpression(Node n) {
+		// Not supported right now
 	}
 
 	/** Visit the specified string literal expression node. */
@@ -624,6 +665,9 @@ public class CppPrinter extends Visitor {
 
 	/** Visit the specified type argument expression node. */
 	public void visitTypeArgument(Node n) {
+		// Don't really know what this is
+	  //  List<Type> typeList;
+
 	}
 
 	/** Visit the specified type name expression node. */
@@ -682,9 +726,11 @@ public class CppPrinter extends Visitor {
 	}
 
 	public void visitBasicForControl(Node n) {
+		// Support?
 	}
 
 	public void visitEnhancedForControl(Node n) {
+		// Support?
 	}
 
 	/** Visit the specified break statement node. */ 
@@ -695,10 +741,6 @@ public class CppPrinter extends Visitor {
 
 	}
 
-	/** Visit the specified catch clause statement node. */ 
-	public void visitCatchClause(Node n) {
-		// For multiple catch clauses 
-	}
 
 	/** Visit the specified do while statement node.  */
 	public void visitDoWhileStatement(Node n) {
@@ -723,7 +765,8 @@ public class CppPrinter extends Visitor {
 	//How do label statements in java translate to c++
 	/** Visit the specified labeled statement node. */
 	public void visitLabeledStatement(Node n) {
-
+		// Not supported
+		
 		/*String label = n.getString(0);
         Node statementNode = n.getNode(1);
 
@@ -738,33 +781,50 @@ public class CppPrinter extends Visitor {
 			pprinter.p("throws (").p(n.getNode(0)).p(')'); 
 		}
 	}
+	
 
+
+	/** Visit the specified catch clause statement node. */ 
+	public void visitCatchClause(Node n) {
+		pprinter.p("catch("); 
+		visitFormalParameter(n.getNode(0)); 
+		pprinter.pln(") {"); 
+		pprinter.pln(n.getString(1)).pln(';'); 
+		pprinter.pln('}'); 
+		
+	    /*FormalParameter parameter;
+	    Statement statement;*/
+		}
+
+	
 	/** Visit the specified try catch finally statement node. */
 	public void visitTryCatchFinallyStatement(Node n) {
+		pprinter.pln("try { "); 
+		pprinter.pln(n.getString(0)); 
+		pprinter.pln('}'); 
+		
+		// Print catch clauses... this needs work
+		/*Node catchClauses = n.getNode(1); 
+		Node catchStatements = n.getNode(2); 
+		for (Object cc : catchClauses) {
+
+		}
+		for (Object cs : catchStatements) {
+			pprinter.p("catch("); 
+			visitFormalParameter((Node)cc.getNode(0)); 
+			pprinter.pln(") {"); 
+			pprinter.pln(cs.getString(1)).pln(';'); 
+			pprinter.pln('}'); 
+		}*/
+		
+		// Print 
 		/*
-    	   Node statementNode = n.getNode(0);
-           //TODO: im concerned this will not work because the rats documentation sort of makes it seem
-           // like there is a list of nodes, each of which has a CatchClause and a Statement
-           List<Node> catchClauseListNode = n.getList(1);
-           List<Node> catchStatementListNode = n.getList(2);
-
-           Statement statement = dispatch(statementNode);
-
-           List<CatchClause> catchClauseList = new ArrayList<CatchClause>();
-           for(Node cNode : catchClauseListNode) {
-               CatchClause clause = dispatch(cNode);
-               catchClauseList.add(clause);
-           }
-
-           List<Statement> catchStatementList = new ArrayList<Statement>();
-           for(Node sNode : catchStatementListNode) {
-               Statement state = dispatch(sNode);
-               catchStatementList.add(state);
-           }
-
-           return new TryCatchFinallyStatement(statement, catchClauseList, catchStatementList);*/
+    	       	Statement statement;
+    			List<CatchClause> catchClauses;
+    			List<Statement> catchStatements; */
 	}
 
+	/** Visit the specified formal parameter node. */
 	public void visitFormalParameter(Node n) {
 		// Print modifier 
 		if (null != n.getNode(0)) {
@@ -779,7 +839,7 @@ public class CppPrinter extends Visitor {
 	 
 	}
 	
-	/** Visit the specified method node. */
+	/** Visit the specified method declaration node. */
 	public void visitMethodDeclaration(Node n) {
 		Node modifiersNode = n.getNode(0); 
 		
@@ -788,14 +848,6 @@ public class CppPrinter extends Visitor {
 			visitModifier((Node)m); 
 			pprinter.p(' '); 
 		}
-/*
-	     Node typeListNode = n.getList(0);
-
-	        List<Type> typeList = new ArrayList<Type>();
-	        for(Node tNode : typeListNode) {
-	            Type type = new GeneralVisitor().dispatch(tNode);
-	            typeList.add(type);
-	        }*/
 		
 		// If the return type has modifiers, print them
 		if (null != n.getNode(2)) {
@@ -843,6 +895,7 @@ public class CppPrinter extends Visitor {
 	    }*/
 	}
 
+	/** Visit the block node. */
 	public void visitBlock(Node n) {
 		Node statements = n.getNode(0); 
 		for (Object s : statements) {
@@ -855,11 +908,12 @@ public class CppPrinter extends Visitor {
 		// Figure out implementation with regards to visitBlock, because it's abstract
 	}
 	
+	/** Visit the specified modifier node. */
 	public void visitModifier(Node n) {
 		pprinter.p(n.getNode(0)); 
 	}
 	
-	
+	/** Visit the field declaration node. */
 	public void visitFieldDeclaration(Node n) {
 		// Print the modifiers
 		if (null != n.getNode(0)) {
@@ -888,6 +942,7 @@ public class CppPrinter extends Visitor {
 	    Expression assignment; */
 	}
 
+	/** Visit the constructor declaration node. */
 	public void visitConstructorDeclaration(Node n) {
 		// Print the modifiers
 		if (null != n.getNode(0)) {
@@ -927,6 +982,7 @@ public class CppPrinter extends Visitor {
 	    Block methodBlock;*/
 	}
 
+	/** Visit the class declaration node. */
 	public void visitClassDeclaration(Node n) {
 		// Print the modifiers
 		if (null != n.getNode(0)) {
@@ -944,6 +1000,9 @@ public class CppPrinter extends Visitor {
 		// Print the class body 
 		visitClassBody(n.getNode(2)); 
 		
+		// Print parent class (for debugging, etc.)
+		visitClassDeclaration(n.getNode(4)); 
+		
 	    /*List<Modifier> modifiers;
 	    String name;
 	    ClassBody classBody;
@@ -952,6 +1011,7 @@ public class CppPrinter extends Visitor {
 	    ClassDeclaration _inheritsFrom;*/
 	}
 
+	/** Visit the specified class body node. */
 	public void visitClassBody(Node n) {
 		// Print declarations 
 		Node declarations = n.getNode(0); 
@@ -963,29 +1023,74 @@ public class CppPrinter extends Visitor {
 
 	}
 	
+	/** Visit the specified declaration node. */
 	public void visitDeclaration(Node n)  {
 		// Figure out how to implement, since Declaration is abstract 
 	}
 	
-	public void visitCompilationUnit(Node n) {
+	/** Visit the specified compilation unit pod node. */
+	public void visitCompilationUnitPod(Node n) {
 	}
 
+	/** Visit the specified pointer type node. */
 	public void visitPointerType(Node n) {
-		
+		pprinter.p(n.getNode(0)).p("* "); 
 	}
 	
+	/** Visit the specified primitive type node. */
+	public void visitPrimitiveType(Node n){
+		pprinter.p(n.getNode(0)).p(' '); 
+	}
+	
+	/** Visit the specified expression node. */
 	public void visitExpression(Node n) {
 		pprinter.p(n.getString(0)).p(' ').p(n.getNode(1)); 
 	}
-	
+
+	/** Visit the specified System.out.print node. */
 	public void visitSystemOutPrint(Node n) {
-		// add #include<iostream.h> to top of c++ file 
+		// Make sure to add #include<iostream.h> to top of c++ file 
 		pprinter.p("cout << ");
 
 		// TODO: Make sure nested calls don't blow up here
 		pprinter.p(n.getNode(0)); 
 	}
+	
+	/** Visit the specified System.out.println node. */
+	public void visitSystemOutPrintLn(Node n) {
+		// Make sure to add #include<iostream.h> to top of c++ file 
+		pprinter.p("cout << ");
 
+		// TODO: Make sure nested calls don't blow up here
+		pprinter.p(n.getNode(0)).pln(" << endl;"); 
+	}
+
+	/** Visit the specified v table node. */
+	public void visitVTable(Node n) {
+	    //List<FieldDeclaration> vTableMembers; Why isn't this List<VTableFieldDeclaration>?
+	    
+		if (null != n.getNode(0)) {
+			Node vTableMembers = n.getNode(0); 
+			for (Object v : vTableMembers) {
+				visitVTableFieldDeclaration((Node)v); 
+			}
+		}
+	}
+	
+	/** Visit the specified v table field declaration node. */
+	public void visitVTableFieldDeclaration(Node n) {
+		// Print out in c++ syntax
+		pprinter.p(n.getNode(2).getString(1)).p("::");
+		visitMethodDeclaration(n.getNode(1)); 
+		
+		// Print out if the method is virtual (just a debugging tool)
+		// pprinter.p("This method is virtual: ").p(n.getNode(0)); 
+		
+	    /*boolean _isVirtualOverride;
+	    MethodDeclaration _method;
+	    ClassDeclaration _ancestorClass;*/
+	}
+	
 	public static void main(String[] args) {
 		System.out.println("hello world"); 
 	
