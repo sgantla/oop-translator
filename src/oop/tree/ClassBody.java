@@ -21,7 +21,7 @@ import java.util.List;
  *                  public Circle}          a MethodDeclaration
  */
 
-public class ClassBody extends Node {
+public class ClassBody extends CNode {
 
     // Pointer _vptr;
     List<Declaration> declarations;
