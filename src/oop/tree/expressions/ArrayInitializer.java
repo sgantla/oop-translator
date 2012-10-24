@@ -7,7 +7,7 @@ import oop.translatorTree.*;
 
 import java.util.List;
 
-public class ArrayInitializer extends Node {
+public class ArrayInitializer extends CNode {
 
     List<Expression> expressions;
     List<Modifier> modifiers;

@@ -8,7 +8,7 @@ import oop.translatorTree.*;
 
 import java.util.List;
 
-public class TypeName extends Node {
+public class TypeName extends CNode {
 
     String primitiveType;
     List<String> qualifiedIdentifiers;

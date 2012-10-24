@@ -6,7 +6,7 @@ import oop.tree.statements.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
-public abstract class Literal extends Node {
+public abstract class Literal extends CNode {
 
     Type type;
 

@@ -8,7 +8,7 @@ import oop.translatorTree.*;
 
 import java.util.List;
 
-public class TypeArgument extends Node {
+public class TypeArgument extends CNode {
 
     List<Type> typeList;
 

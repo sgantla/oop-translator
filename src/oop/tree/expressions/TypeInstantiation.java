@@ -6,7 +6,7 @@ import oop.tree.statements.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
-public class TypeInstantiation extends Node {
+public class TypeInstantiation extends CNode {
 
     String typeInstantiation;
     TypeArgument typeArgument; //opt
