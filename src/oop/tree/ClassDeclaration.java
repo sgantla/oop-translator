@@ -2,6 +2,7 @@ package oop.tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import oop.tree.Modifier;
 
 /** Declaration representing a class, the header of a class.
  *

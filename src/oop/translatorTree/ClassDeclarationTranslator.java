@@ -4,6 +4,7 @@ import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 import oop.tree.interfaces.*;
+import oop.tree.Modifier;
 
 import xtc.tree.*;
 import xtc.type.*;

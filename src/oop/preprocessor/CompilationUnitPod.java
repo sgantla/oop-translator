@@ -31,6 +31,15 @@ public class CompilationUnitPod {
 	private ClassT classType;
 
 	/* Constructors */
+	
+	/** Creates an empty compilation unit pod to return when the pod tree is empty. */ 
+	public CompilationUnitPod() {
+		this.javaAstRoot = null; 
+		this.symbolTable = null; 
+		this.qualifiedClassName = null; 
+		this.relativeDir = null; 
+		this.isLibraryClass = false; 
+	}
 
 	public CompilationUnitPod(Node ast, SymbolTable table, String qualifiedClassName, File relativeDir, boolean isLibrary) {
 		this.javaAstRoot = ast;

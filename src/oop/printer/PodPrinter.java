@@ -1,8 +1,6 @@
 package oop.printer; 
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
+
+import java.io.*; 
 
 import java.text.BreakIterator;
 
@@ -22,6 +20,7 @@ public class PodPrinter extends Utility {
 	protected PrintWriter out; 
 	protected PrintWriter directOut; 
 
+	protected FileWriter o; 
 	/** The current indentation level. */
 	protected int indent = 0;
 
@@ -30,6 +29,10 @@ public class PodPrinter extends Utility {
 
 	/** The current line. */
 	protected long line = Constants.FIRST_LINE;
+	
+	public PodPrinter(FileWriter out) {
+		this.o = out; 
+	}
 
 	public PodPrinter(OutputStream out) {
 		this(new PrintWriter(out, false)); 
