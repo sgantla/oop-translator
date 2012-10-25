@@ -465,7 +465,7 @@ public class ExpressionVisitor extends Visitor
     }
 
     public ExpressionVisitor(String scopeName) {
-	this.scopeName = scope;
+	this.scopeName = scopeName;
     }
     
     private String scopeName;

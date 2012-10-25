@@ -10,6 +10,7 @@ import oop.tree.*;
 import xtc.tree.*;
 import xtc.type.*;
 import xtc.util.*;
+import xtc.Constants;
 
 import java.util.*;
 import java.io.*;
@@ -24,9 +25,10 @@ public class StatementVisitor extends Visitor
 
         Expression booleanExpression = null;
         if (booleanExpressionNode != null) {
-            booleanExpression = new ExpressionVisitor(currentScopeNamecurrentScopeName).visit(booleanExpressionNode); }
+            booleanExpression = new ExpressionVisitor(currentScopeName).expressionDispatch(booleanExpressionNode); 
+        }
 
-        Expression valueExpression = new ExpressionVisitor(currentScopeNamecurrentScopeName).expressionDispatch(valueExpressionNode);
+        Expression valueExpression = new ExpressionVisitor(currentScopeName).expressionDispatch(valueExpressionNode);
 
         return new AssertStatement(booleanExpression, valueExpression);
     }
@@ -71,7 +73,7 @@ public class StatementVisitor extends Visitor
         if (declaratorExpressionListNode != null) {
             for(Object eNode : declaratorExpressionListNode) {
                 if(eNode instanceof Node) {
-                    Expression expression = new ExpressionVisitor(currentScopeNamecurrentScopeName).expressionDispatch(Node)eNode);
+                    Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch((Node)eNode);
                     declaratorExpressionList.add(expression);
                 }
             }
@@ -81,13 +83,13 @@ public class StatementVisitor extends Visitor
 
         Expression expression = null;
         if (expressionNode != null) {
-            expression = new ExpressionVisitor(currentScopeNamecurrentScopeName).expressionDispatch(expressionNode); }
+            expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode); }
 
         List<Expression> expressionList = new ArrayList<Expression>();
         if (expressionListNode != null) {
             for(Object eNode : expressionListNode) {
                 if(eNode instanceof Node ) {
-                    Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch((Node)eNode);
+                    Expression exp = new ExpressionVisitor(currentScopeName).expressionDispatch((Node)eNode);
                     expressionList.add(exp);
                 }
             }
@@ -140,7 +142,7 @@ public class StatementVisitor extends Visitor
         Node expressionNode = n.getNode(1);
 
         Statement statement = statementDispatch(statementNode);
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new DoWhileStatement(statement, expression);
     }
@@ -234,7 +236,7 @@ public class StatementVisitor extends Visitor
         Node expressionNode = n.getNode(0);
         Node switchClauseListNode = n.getNode(1);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         List<SwitchClause> switchClauseList = new ArrayList<SwitchClause>();
         for(Object sNode: switchClauseListNode) {
@@ -304,13 +306,7 @@ public class StatementVisitor extends Visitor
 	    newScopeEntered = true;
 	}
 	
-	Node lastParent = currentParent;
-	currentParent = n;
-
         Statement statement = (Statement) dispatch(n);
-        
-        currentParent = lastParent;
-        statement.setParent(currentParent);
         
 	if (newScopeEntered) {
 	    currentScopeName = lastScopeName;
@@ -323,7 +319,7 @@ public class StatementVisitor extends Visitor
 	
 	List<Statement> statements = new ArrayList<Statement>();
 	
-	for (Node child : n) {
+	for (Object child : n) {
 	    if (child instanceof Node) {
 		Node childNode = (Node) child;
 		statements.add(statementDispatch(childNode));
