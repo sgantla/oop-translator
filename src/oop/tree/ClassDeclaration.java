@@ -2,7 +2,7 @@ package oop.tree;
 
 import java.util.ArrayList;
 import java.util.List;
-import oop.tree.Modifier;
+import oop.tree.Modifiers;
 
 /** Declaration representing a class, the header of a class.
  *
@@ -15,7 +15,7 @@ import oop.tree.Modifier;
 
 public class ClassDeclaration extends Declaration {
 
-    List<Modifier> modifiers;
+    List<Modifiers> modifiers;
     String name;
     ClassBody classBody;
 

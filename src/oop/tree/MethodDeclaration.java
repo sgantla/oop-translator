@@ -3,13 +3,15 @@ package oop.tree;
 import oop.tree.expressions.*;
 import oop.tree.statements.*;
 
+import xtc.type.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MethodDeclaration extends Declaration {
-    List<Modifier> modifiers;
+    List<Modifiers> modifiers;
     Type returnType;
-    List<Modifier> returnTypeModifiers;
+    List<Modifiers> returnTypeModifiers;
     String name;
     List<FormalParameter> formalParameters;
     //ThrowsClause throws;

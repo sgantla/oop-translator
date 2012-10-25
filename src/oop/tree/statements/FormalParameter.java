@@ -9,11 +9,11 @@ import java.util.List;
 
 public class FormalParameter extends CNode {
 
-   List<Modifier> modifiers;
+   List<Modifiers> modifiers;
    Type type;
    String name;
 
-   public FormalParameter(List<Modifier> modifiers, Type type, String name) {
+   public FormalParameter(List<Modifiers> modifiers, Type type, String name) {
        this.modifiers = modifiers;
        this.type = type;
        this.name = name;

@@ -1,6 +1,6 @@
 package oop.tree;
 
-public enum Modifier {
+public enum Modifiers {
     PUBLIC,
     PRIVATE,
     STATIC,
