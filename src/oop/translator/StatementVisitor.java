@@ -22,11 +22,11 @@ public class StatementVisitor extends Visitor
         Node valueExpressionNode = n.getNode(1);
 
         if (booleanExpressionNode != null) {
-            Expression booleanExpression = new ExpressionVisitor().visit(booleanExpressionNode); }
+            Expression booleanExpression = new ExpressionVisitor(currentScopeNamecurrentScopeName).visit(booleanExpressionNode); }
         else {
             Expression booleanExpression = null; }
 
-        Expression valueExpression = new ExpressionVisitor().expressionDispatch(valueExpressionNode);
+        Expression valueExpression = new ExpressionVisitor(currentScopeNamecurrentScopeName).expressionDispatch(valueExpressionNode);
 
         return new AssertStatement(booleanExpression, valueExpression);
     }
@@ -67,7 +67,7 @@ public class StatementVisitor extends Visitor
         List<Expression> declaratorExpressionList = new ArrayList<Expression>();
         if (declaratorExpressionListNode != null) {
             for(Node eNode : declaratorExpressionListNode) {
-                Expression expression = new ExpressionVisitor().expressionDispatch(eNode);
+                Expression expression = new ExpressionVisitor(currentScopeNamecurrentScopeName).expressionDispatch(eNode);
                 declaratorExpressionList.add(expression);
             }
         }
@@ -75,14 +75,14 @@ public class StatementVisitor extends Visitor
             declaratorExpressionList = null; }
 
         if (expressionNode != null) {
-            Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode); }
+            Expression expression = new ExpressionVisitor(currentScopeNamecurrentScopeName).expressionDispatch(expressionNode); }
         else {
             Expression expression = null; }
 
         List<Expression> expressionList = new ArrayList<Expression>();
         if (expressionListNode != null) {
             for(Node eNode : expressionListNode) {
-                Expression expression = new ExpressionVisitor().expressionDispatch(eNode);
+                Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(eNode);
                 expressionList.add(expression);
             }
         }
@@ -116,7 +116,7 @@ public class StatementVisitor extends Visitor
         //third is false statement
         Node falseStatement = n.getNode(2);
         
-        Expression newExp = new ExpressionVisitor().expressionDispatch(expNode);
+        Expression newExp = new ExpressionVisitor(currentScopeName).expressionDispatch(expNode);
         Statement trueStatement = statementDispatch(trueStatement);
         Statement falseStatement = statementDispatch(falseStatement);
 
@@ -157,7 +157,7 @@ public class StatementVisitor extends Visitor
 
         Type type = new GeneralVisitor().generalDispatch(typeNode);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new EnhancedForControl(modifiersList, type, name, expression);
     }
@@ -165,7 +165,7 @@ public class StatementVisitor extends Visitor
     public ExpressionStatement visitExpressionStatement(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new ExpressionStatement(expression);
     }
@@ -192,7 +192,7 @@ public class StatementVisitor extends Visitor
     public ReturnStatement visitReturnStatement(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new ReturnStatement(expression);
     }
@@ -202,7 +202,7 @@ public class StatementVisitor extends Visitor
         List<Node> caseClauseStatementNode = null; // n.getList(1);
         List<Node> defaultClauseNode = null; // n.getList(2);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         List<DeclarationOrStatement> caseClauseStatement = new ArrayList<DeclarationOrStatement>();
         for(Node dNode: caseClauseStatementNode) {
@@ -235,7 +235,7 @@ public class StatementVisitor extends Visitor
     public ThrowStatement visitThrowStatement(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new ThrowStatement(expression);
     }
@@ -268,22 +268,67 @@ public class StatementVisitor extends Visitor
         Node expressionNode = n.getNode(0);
         Node statementNode = n.getNode(1);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
         Statement statement = statementDispatch(statementNode);
 
         return new WhileStatement(expression, statement);
     }
 
-    public Statement statementDispatch(Node n)
-    {
-        Object o = super.dispatch(n);
-        return (Statement) o;
+    public Statement statementDispatch(Node n) {	
+    
+	boolean newScopeEntered;
+	String lastScopeName;
+	if (SymbolTable.hasScope(n)) {
+	    String scopeName = n.getStringProperty(Constants.SCOPE);
+	    lastScopeName = currentScopeName;
+	    currentScopeName = scopeName;
+	    newScopeEntered = true;
+	}
+	
+	Node lastParent = currentParent;
+	currentParent = n;
+
+        Statement statement = (Statement) dispatch(n);
+        
+        currentParent = lastParent;
+        statement.setParent(currentParent);
+        
+	if (newScopeEntered) {
+	    currentScopeName = lastScopeName;
+	}
+	
+        return statement;
     }
-    /*
-    public Statement dispatch(Node n)
-    {
-        Object o = super.visit(n);
-        return (Statement) o;
+    
+    public Block visitBlock(Node n) {
+	
+	List<Statement> statements = new ArrayList<Statement>();
+	
+	for (Node child : n) {
+	    if (child instanceof Node) {
+		Node childNode = (Node) child;
+		statements.add(statementDispatch(childNode));
+	    }
+	}
+	
+	return new Block(statements);
     }
-    */
+
+    public StatementVisitor(CNode n, String scope) {
+	
+	currentParent = n;
+	currentScopeName = scope;
+    }
+    
+    public StatementVisitor(CNode n) {
+	
+	currentParent = n;
+    }
+    
+    public StatementVisitor() {
+	
+    }
+    
+    private CNode currentParent;
+    private String currentScopeName;
 }

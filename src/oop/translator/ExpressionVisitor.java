@@ -456,15 +456,24 @@ public class ExpressionVisitor extends Visitor
 
     public Expression expressionDispatch(Node n)
     {
-        Object o = super.dispatch(n);
-        return (Expression) o;
+        Expression expr = (Expression) dispatch(n);
+        
+	expr.setLocation(n.getLocation());
+	expr.setScopeName(scopeName);
+	
+	if (firstExpression) {
+	    Translator.registerUnresolvedExpression(expr);
+	    firstExpression = false;
+	}
+	
+        return expr;
+    }
+
+    public ExpressionVisitor(String scopeName) {
+	this.scopeName = scope;
     }
     
-    /*
-    public Expression dispatch(Node n)
-    {
-        Object o = super.visit(n);
-        return (Expression) o;
-    }
-    */
+    private String scopeName;
+    private bool firstExpression = true;
+
 }

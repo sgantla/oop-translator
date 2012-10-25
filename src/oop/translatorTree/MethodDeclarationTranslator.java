@@ -2,8 +2,6 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
-import oop.translatorTree.*;
-import oop.tree.interfaces.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -13,8 +11,7 @@ import xtc.Constants;
 import java.util.*;
 import java.io.*;
 
-public class MethodDeclarationTranslator extends DeclarationTranslator
-    implements MethodDeclaration {
+public class MethodDeclarationTranslator extends MethodDeclaration {
 
     private class Input {
 	private MethodT type;
@@ -31,8 +28,12 @@ public class MethodDeclarationTranslator extends DeclarationTranslator
     private Input java = new Input();
     private Output cpp = new Output();
     
-    public MethodDeclarationTranslator(TranslatorNode parent) {
-	super(parent);
+    public MethodDeclarationTranslator(CNode parent) {
+	setParent(parent);
+	setName(CppAstUtil.NodeName.MethodDeclaration);
+    }
+    public MethodDeclarationTranslator() {
+	setName(CppAstUtil.NodeName.MethodDeclaration);
     }
    
     /* MethodDeclaration Members */
@@ -58,43 +59,30 @@ public class MethodDeclarationTranslator extends DeclarationTranslator
     public BlockTranslator getMethodBody() {
 	return null;
     }    
-
-    /* CppAstNode Members */
-    public CppAstUtil.NodeName getNodeType() {
-	return CppAstUtil.NodeName.MethodDeclaration;
-    }
     
     /* TranslatorNode Members */
     public void initialize(Node n) {
     
 	// Record scope name
     	String scopeName = n.getStringProperty(Constants.SCOPE);
-	setQualifiedScopeName(scopeName);
+	setScopeName(scopeName);
 	
 	// The MethodT class holds the method's name, return value, param values/identifiers, and exceptions
-	MethodT methodType = Translator.resolveMethodType(this);
-	java.type = methodType;
+	java.type = Translator.resolveMethodType(this);
 	
 	// Get method body
 	Node blockNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Block);
 	if (blockNode != null) {
-	    BlockTranslator block = new BlockTranslator(this);
-	    block.initialize(blockNode);
+	    Block block = new StatementVisitor(this, scopeName).statementDispatch(blockNode);
 	    cpp.body = block;
 	}
 	
-	// Record if method is private or static. 
+	// Possible modifiers: public, protected, private, static, abstract, final 
 	Node modifiersNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Modifiers);
-	if (modifiersNode != null) {
-	    for (Node modifierNode : JavaAstUtil.getChildrenByName(modifiersNode, JavaAstUtil.NodeName.Modifier)) {
-		String mod = JavaAstUtil.extractString(modifierNode);
-		if (mod.equals("static")) {
-		    java.modifiers.add(Modifier.STATIC);
-		} else if (mod.equals("private")) {
-		    java.modifiers.add(Modifier.PRIVATE);
-		} 
-	    }
-	}
+	java.modifiers = JavaAstUtil.parseModifiers(modifiersNode);
+	
+	Translator.reportMethodModifiers(java.type, java.modifiers);
+	
     }
     
     /* MethodDeclarationTranslator Members */

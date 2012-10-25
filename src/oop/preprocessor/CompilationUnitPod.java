@@ -27,7 +27,7 @@ public class CompilationUnitPod {
 	private CompilationUnitTranslator cppCompilationUnit;
 	private List<CompilationUnitPod> childCompilationUnitPods = new ArrayList<CompilationUnitPod>();
 	private CompilationUnitPod parentCompilationUnitPod;
-	private InheritedData inheritedData;
+	private InheritanceData inheritanceData;
 	private ClassT classType;
 
 	/* Constructors */
@@ -92,8 +92,8 @@ public class CompilationUnitPod {
 		return classType;
 	}
 
-	public InheritedData getInheritedData() {
-	return inheritedData;
+	public InheritanceData getInheritanceData() {
+	return inheritanceData;
     }
 
 
@@ -103,8 +103,8 @@ public class CompilationUnitPod {
 		this.classType = classType;
 	}
 	
-    public void setInheritedData(InheritedData inheritedData) {
-	this.inheritedData = inheritedData;
+    public void setInheritanceData(InheritanceData inheritanceData) {
+	this.inheritanceData = inheritanceData;
     }
 
 	public void setParentPod(CompilationUnitPod parent) {
