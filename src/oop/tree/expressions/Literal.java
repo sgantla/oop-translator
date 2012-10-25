@@ -7,7 +7,7 @@ import oop.translatorTree.*;
 
 import xtc.type.*;
 
-public abstract class Literal extends CNode {
+public abstract class Literal extends Expression {
 
     Type type;
 
