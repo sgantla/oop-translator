@@ -30,9 +30,9 @@ import oop.translatorTree.*;
 import oop.tree.*; 
 import oop.tree.expressions.*; 
 import oop.tree.statements.*; 
-//import oop.tree.interfaces.*; 
 //import oop.tree.statements.FormalParameter;
 
+import xtc.tree.Node; 
 import xtc.type.*;
 import xtc.tree.*; 
 import xtc.util.*;
@@ -60,15 +60,15 @@ public class CppPrinter {
 		this.hout = hout; 
 		this.rootPod = rootPod; 
 		cppAstRootCNode = rootPod.getCppCompilationUnit(); 
-		//ClassDeclaration rootClass = cppAstRootCNode.getClassDeclaration(); 
-		/*visit((CNode)rootClass); */
+		ClassDeclaration rootClass = cppAstRootCNode.getClassDeclaration(); 
+		visit((CNode)rootClass); 
 	}
 
 	/** Visit Expressions. */
 
 	/** Visit the specified equality expression CNode. */
 	public void visitEqualityExpression(EqualityExpression n) throws IOException { 
-		//visitBinaryExpression(n); 
+		getBinary(n); 
 	}
 
 	/** Visit the specified additive expression CNode. */
@@ -78,7 +78,7 @@ public class CppPrinter {
 	}
 
 	/** Visit the specified multiplicative expression CNode. */ 
-	public void visitMultiplicationExpression(MultiplicativeExpression n) throws IOException {
+	public void visitMultiplicationExpression(MultiplicationExpression n) throws IOException {
 		// Tomorrow
 		getBinary(n); 
 	}
@@ -144,22 +144,22 @@ public class CppPrinter {
 
 	/** Visit the specified boolean literal CNode. */
 	public void visitBooleanLiteral(BooleanLiteral n) throws IOException {
-		getLiteral(n); 
+		cout.write(n.value); 
 	}
 
 	/** Visit the specified character literal CNode. */
 	public void visitCharacterLiteral(CharacterLiteral n) throws IOException {
-		getLiteral(n); 
+		cout.write(n.value); 
 	}
 
 	/** Visit the specified floating point literal CNode. */
 	public void  visitFloatingPointLiteral(FloatingPointLiteral n) throws IOException { 
-		getLiteral(n); 
+		cout.write(n.value); 
 	}
 
 	/** Visit the specified integer literal CNode. */
 	public void  visitIntegerLiteral(IntegerLiteral n) throws IOException { 
-		getLiteral(n); 
+		cout.write(n.value); 
 	}
 
 	/** Visit the specified string literal expression CNode. */
@@ -182,11 +182,13 @@ public class CppPrinter {
 		getLiteral(n); 
 	}
 	 */
-	/** Visit a general literal expression. */
-	public void getLiteral(Literal n) throws IOException {
-		//cout.write(n.value); 
+	
+	public void visitExpressionStatement(ExpressionStatement n) throws IOException {
+		visit(n.expression);
+		
+		// public Expression expression;
 	}
-
+	
 	/** Visit the basic cast expression CNode. */
 	public void visitBasicCastExpression(BasicCastExpression n)  throws IOException{
 
@@ -200,6 +202,22 @@ public class CppPrinter {
 	/** Visit the specified call expression CNode. */
 	public void visitCallExpression(CallExpression n) throws IOException { 
 		
+		// Print name of method 
+		cout.write(n.name + "("); 
+		
+		// Print arguments if there are any
+		if (null != n.arguments) {
+			for (Expression a : n.arguments) {
+				visit(a); 
+				cout.write(", "); // This prints an extra comma at the end. Fix. 
+			}
+		}
+		
+		cout.write(");"); 
+		
+	    /*public TypeArgument typeArguments; //opt
+	    public String name;
+	    public List<Expression> arguments;*/ 
 
 	}
 
@@ -208,6 +226,10 @@ public class CppPrinter {
 
 	}
 
+	public void visitArrayInitializer(ArrayInitializer n) throws IOException {
+		
+	}
+	
 	/** Visit the specified new array expression CNode. */ 
 	public void  visitNewArrayExpression(NewArrayExpression n) throws IOException {
 
@@ -220,6 +242,7 @@ public class CppPrinter {
 
 	/** Visit the specified primary identifier expression CNode. */
 	public void visitPrimaryIdentifier(PrimaryIdentifier n) throws IOException {
+		cout.write(n.name); 
 	}
 
 	/** Visit the specified relational expression CNode. */ 
@@ -233,7 +256,9 @@ public class CppPrinter {
 
 	/** Visit the specified selection expression CNode. */
 	public void visitSelectionExpression(SelectionExpression n)  throws IOException{
-
+		cout.write('('); 
+		visit(n.expression); 
+		cout.write("." + n.name + " "); 
 	}
 
 	/** Visit the specified subscript expression CNode. */
@@ -254,11 +279,6 @@ public class CppPrinter {
 	public void visitTypeName(TypeName n)  throws IOException{
 	}
 
-	/** Visit the specified type argument expression CNode. */
-	public void visitTypeArgument(TypeArgument n)  throws IOException{
-
-	}
-
 	/** Visit the specified type initialization expression CNode. */
 	public void visitTypeInstantiation(TypeInstantiation n) throws IOException {
 
@@ -267,12 +287,14 @@ public class CppPrinter {
 	/** Statements */
 
 	/** Visit the specified type assert statement CNode. */
-	public void visitAssertStatement(AssertStatement n) throws IOException{
+	public void visitAssertStatement(AssertStatement n) throws IOException {
+		
 	}
 
 	/** Visit the specified for statement. */ 
 	public void visitForStatement(ForStatement n) throws IOException {
-
+	    /*public ForControl forControl;
+	    public Statement statement;*/ 
 	}
 
 	/** Visit the specified basic for control statement. */ 
@@ -287,7 +309,8 @@ public class CppPrinter {
 
 	/** Visit the specified break statement CNode. */ 
 	public void visitBreakStatement(BreakStatement n) throws IOException {
-
+		cout.write("break;"); 
+		cout.newLine(); 
 	}
 
 	/** Visit the specified catch clause statement CNode. */ 
@@ -316,12 +339,23 @@ public class CppPrinter {
 
 	/** Visit the specified continue statement CNode. */ 
 	public void visitContinueStatement(ContinueStatement n) throws IOException {
-
+		cout.write("continue;"); 
 	}
 
 	/** Visit the specified declaration or statement CNode. */
-	public void visitDeclarationOrStatement(DeclarationOrStatement n) throws IOException{
+	public void visitDeclarationOrStatement(DeclarationOrStatement n) throws IOException { 
 
+		// If it's a declaration 
+		if (null != n.declaration) {
+			visit(n.declaration); 
+		}
+		
+		// If it's a statement 
+		else {
+			visit(n.statement); 
+		}
+	    /*public Declaration declaration;
+	    public Statement statement;*/
 	}
 
 	/** Visit the specified do while statement CNode.  */
@@ -351,13 +385,13 @@ public class CppPrinter {
 
 	/** Visit the specified formal parameter CNode. */
 	public void visitFormalParameter(FormalParameter n) throws IOException{
-		for (Modifier m : n.modifiers) {
+		for (Modifiers m : n.modifiers) {
 			getModifier(m); 
 			cout.write(' ');
 		}
 
 		// Print the type
-		visit(n.type); 
+		//visit(n.type); 
 		cout.write(' '); 
 
 		// Print the name 
@@ -381,12 +415,72 @@ public class CppPrinter {
 
 	/** Visit the specified switch clause statement CNode.  */
 	public void visitSwitchClause(SwitchClause n) throws IOException {
-
+		// Print the case clause expression
+		visit(n.caseClauseExpression); 
+		
+		// If the clause is a case clause
+		if (null != n.caseClauseStatements) {
+			// Print the expression 
+			visit(n.caseClauseExpression); 
+			cout.write(":"); 
+			cout.newLine();
+			
+			// Print the case clause statement
+			for (DeclarationOrStatement ccs : n.caseClauseStatements) {
+				visit(ccs);
+			}
+			
+		}
+		
+		// If it's a default clause
+		else {
+			cout.write("default: "); 
+			cout.newLine(); 
+			
+			// Print the default clause
+			for (DeclarationOrStatement dc : n.defaultClause) {
+				visit(dc); 
+			}
+			
+		}
+		
+		 /* public Expression caseClauseExpression;
+		    public List<DeclarationOrStatement> caseClauseStatements;
+		    public List<DeclarationOrStatement> defaultClause;*/
 	}
 
 	/** Visit the specified switch statement CNode. */ 
 	public void visitSwitchStatement(SwitchStatement n) throws IOException {
+		cout.write("switch ("); 
+		visit(n.expression);
+		cout.write(") {"); 
+		cout.newLine(); 
+		
+		for (SwitchClause sc : n.switchClause) {
+			cout.write("case "); 
+			visitSwitchClause(sc); 
+			cout.write("break;"); 
+			cout.newLine(); 
+		}
+		
+		/*
+		 *     public Expression expression;
+    public List<SwitchClause> switchClause;
+		 * 
+		 * 
+		 * boolean nested = startStatement(STMT_ANY, n); 
+		pprinter.indent().p("switch (").p(n.getNode(0)).p(") {"); 
+		prepareNested(); 
 
+		Node switchClauseListNode = n.getNode(1);
+		int switchCount = 1; 
+		for(Object sNode: switchClauseListNode) {
+			pprinter.p("case ");
+			visitSwitchClause((Node)sNode); 
+			pprinter.pln("break;");
+			switchCount ++; 
+		}
+		pprinter.p('}'); */
 	}
 
 	/** Visit the specified throw statement CNode. */
@@ -421,7 +515,7 @@ public class CppPrinter {
 	/** Visit the specified class declaration node. */
 	public void visitClassDeclaration(ClassDeclaration n) throws IOException {
 		// Print the modifiers
-		for (Modifier m : n.modifiers) {
+		for (Modifiers m : n.modifiers) {
 			getModifier(m); 
 			cout.write(" "); 
 		}
@@ -454,7 +548,7 @@ public class CppPrinter {
 	/** Visit the specified constructor declaration node. */
 	public void visitConstructorDeclaration(ConstructorDeclaration n) throws IOException {
 		// Print the modifiers
-		for (Modifier m : n.modifiers) {
+		for (Modifiers m : n.modifiers) {
 			getModifier(m); 
 			cout.write(" "); 
 		}
@@ -463,11 +557,11 @@ public class CppPrinter {
 		cout.write(n.name + " ("); 
 
 		// Print the parameters if there are any
-		for (FormalParameter f : n.formalParameters) {
+		/*for (FormalParameter f : n.formalParameters) {
 			//visit(f); 
 			cout.write(", "); 
 			// This prints an extra comma at the end. Fix.
-		}
+		}*/
 
 		cout.write(") {"); 
 
@@ -509,13 +603,13 @@ public class CppPrinter {
 	/** Visit the specified field declaration node. */
 	public void visitFieldDeclaration(FieldDeclaration n) throws IOException {
 		// Print the modifiers
-		for (Modifier m : n.modifiers) {
+		for (Modifiers m : n.modifiers) {
 			getModifier(m); 
 			cout.write(" "); 
 		}
 
 		// Print the type 
-		visit(n.type); 
+		// visit(n.type); 
 		cout.write(" " + n.name + " = "); 
 
 		// Print the assignment expression
@@ -535,21 +629,21 @@ public class CppPrinter {
 	public void visitMethodDeclaration(MethodDeclaration n) throws IOException {
 
 		// Print the modifiers
-		for (Modifier m : n.modifiers) {
+		for (Modifiers m : n.modifiers) {
 			getModifier(m); 
 			cout.write(" "); 
 		}
 
 		// Print return type modifiers if there are any
 		if (null != n.returnTypeModifiers) {
-			for (Modifier rm : n.returnTypeModifiers) {
+			for (Modifiers rm : n.returnTypeModifiers) {
 				getModifier(rm); 
 				cout.write(" "); 
 			}
 		}
 
 		// Print the return type 
-		visit(n.returnType); 
+		//visit(n.returnType); 
 		cout.write(" "); 
 
 		// Print the name of the method 
@@ -587,7 +681,7 @@ public class CppPrinter {
 	}
 
 	/** Return lower case names of the specified modifier. */
-	public void getModifier(Modifier n) throws IOException {
+	public void getModifier(Modifiers n) throws IOException {
 		cout.write(n.name().toLowerCase()); 
 	}
 
@@ -596,20 +690,6 @@ public class CppPrinter {
 		// Gets a list of strings 
 	}
 
-	/** Visit the specified object type. */
-	public void visitObjectType(ObjectType n) throws IOException {
-
-	}
-
-	/** Visit the specified pointer type node. */
-	public void visitPointerType(PointerType n) throws IOException {
-
-	}
-
-	/** Visit the specified primitive type node. */
-	public void visitPrimitiveType(PrimitiveType n) throws IOException {
-
-	}
 
 	/** Visit the specified v table node. */
 	public void visitVTable(VTable n) throws IOException {
@@ -622,31 +702,34 @@ public class CppPrinter {
 	}
 
 	/** Visit the specified System.out.print node. */
-	public void visitSystemOutPrint(CNode n) throws IOException {
+	/*public void visitSystemOutPrint(SystemOutPrint n) throws IOException {
+		// Make sure to add #include<iostream.h> to top of c++ file 
+		cout.write("cout << ");
+		// How do we get the output to be printed?
 
-	}
+	}*/
 
 	/** Visit the specified System.out.println node. */
-	public void visitSystemOutPrintLn(CNode n) throws IOException {
+	/*public void visitSystemOutPrintLn(SystemOutPrintLn n) throws IOException {
+		// Make sure to add #include<iostream.h> to top of c++ file 
+		cout.write("cout << ");
+		// How do we get the output to be printed?
+		cout.write(" << endl;"); 
+	}*/
 
+	public void visitType(Node n) {
+		
 	}
-
 
 	// Redo this 
 	public CNode visit(CNode n) {
-<<<<<<< HEAD
-		/*if (null != n) {
-			for (Object o : n) {
-				if(o instanceof CNode) {
-					dispatch((CNode)o);
-				}
-=======
+
 		if (null != n) {
 			switch (n.getName()) {
-			      AdditiveExpression:
-				      visitAdditiveExpression(n);
-				      break;
-			      Annotation:
+					case AdditiveExpression:
+						visitAdditiveExpression((AdditiveExpression)n);
+						break;
+			      /*Annotation:
 				      visitAnnotation(n);
 				      break;
 			      AnnotationDeclaration:
@@ -660,316 +743,240 @@ public class CppPrinter {
 				      break;
 			      Arguments:
 				      visitArguments(n);
+				      break;*/
+					case ArrayInitializer:
+				      visitArrayInitializer((ArrayInitializer)n);
 				      break;
-			      ArrayInitializer:
-				      visitArrayInitializer(n);
+					case AssertStatement:
+				      visitAssertStatement((AssertStatement)n);
 				      break;
-			      AssertStatement:
-				      visitAssertStatement(n);
+					case BasicCastExpression:
+				      visitBasicCastExpression((BasicCastExpression)n);
 				      break;
-			      BasicCastExpression:
-				      visitBasicCastExpression(n);
+					case BasicForControl:
+				      visitBasicForControl((BasicForControl)n);
 				      break;
-			      BasicForControl:
-				      visitBasicForControl(n);
+					case BitwiseAndExpression:
+				      visitBitwiseAndExpression((BitwiseAndExpression)n);
 				      break;
-			      BitwiseAndExpression:
-				      visitBitwiseAndExpression(n);
+					case BitwiseNegationExpression:
+				      visitBitwiseNegationExpression((BitwiseNegationExpression)n);
 				      break;
-			      BitwiseNegationExpression:
-				      visitBitwiseNegationExpression(n);
+					case BitwiseOrExpression:
+				      visitBitwiseOrExpression((BitwiseXorExpression)n);
 				      break;
-			      BitwiseOrExpression:
-				      visitBitwiseOrExpression(n);
+					case BitwiseXorExpression:
+				      visitBitwiseXorExpression((BitwiseXorExpression)n);
 				      break;
-			      BitwiseXorExpression:
-				      visitBitwiseXorExpression(n);
+					case Block:
+				      visitBlock((Block)n);
 				      break;
-			      Block:
-				      visitBlock(n);
+					case BooleanLiteral:
+				      visitBooleanLiteral((BooleanLiteral)n);
 				      break;
-			      BlockDeclaration:
-				      visitBlockDeclaration(n);
+					case BreakStatement:
+				      visitBreakStatement((BreakStatement)n);
 				      break;
-			      BooleanLiteral:
-				      visitBooleanLiteral(n);
+					case CallExpression:
+				      visitCallExpression((CallExpression)n);
 				      break;
-			      Bound:
-				      visitBound(n);
+					case CastExpression:
+				      visitCastExpression((CastExpression)n);
 				      break;
-			      BreakStatement:
-				      visitBreakStatement(n);
+					case CharacterLiteral:
+				      visitCharacterLiteral((CharacterLiteral)n);
 				      break;
-			      CallExpression:
-				      visitCallExpression(n);
+					case ClassBody:
+				      visitClassBody((ClassBody)n);
 				      break;
-			      CaseClause:
-				      visitCaseClause(n);
+					case ClassDeclaration:
+				      visitClassDeclaration((ClassDeclaration)n);
 				      break;
-			      CastExpression:
-				      visitCastExpression(n);
+					case CppCompilationUnit:
+				      visitCompilationUnit((CppCompilationUnit)n);
 				      break;
-			      CharacterLiteral:
-				      visitCharacterLiteral(n);
+					case ConditionalExpression:
+				      visitConditionalExpression((ConditionalExpression)n);
 				      break;
-			      ClassBody:
-				      visitClassBody(n);
+					case ConstructorDeclaration:
+				      visitConstructorDeclaration((ConstructorDeclaration)n);
 				      break;
-			      ClassDeclaration:
-				      visitClassDeclaration(n);
+					case ContinueStatement:
+				      visitContinueStatement((ContinueStatement)n);
 				      break;
-			      ClassLiteralExpression:
-				      visitClassLiteralExpression(n);
-				      break;
-			      CompilationUnit:
-				      visitCompilationUnit(n);
-				      break;
-			      ConcreteDimensions:
-				      visitConcreteDimensions(n);
-				      break;
-			      ConditionalExpression:
-				      visitConditionalExpression(n);
-				      break;
-			      ConditionalStatement:
-				      visitConditionalStatement(n);
-				      break;
-			      ConstructorDeclaration:
-				      visitConstructorDeclaration(n);
-				      break;
-			      ContinueStatement:
-				      visitContinueStatement(n);
-				      break;
-			      Declarator:
+			      /*case Declarator:
 				      visitDeclarator(n);
 				      break;
-			      Declarators:
+			      case Declarators:
 				      visitDeclarators(n);
 				      break;
-			      DefaultClause:
+			      case DefaultClause:
 				      visitDefaultClause(n);
 				      break;
-			      DefaultValue:
+			      case DefaultValue:
 				      visitDefaultValue(n);
-				      break;
-			      Dimensions:
+				      break;*/
+			      /*case Dimensions:
 				      visitDimensions(n);
+				      break;*/
+					case DoWhileStatement:
+				      visitDoWhileStatement((DoWhileStatement)n);
 				      break;
-			      DoWhileStatement:
-				      visitDoWhileStatement(n);
+					case EmptyStatement:
+				      visitEmptyStatement((EmptyStatement)n);
 				      break;
-			      EmptyDeclaration:
-				      visitEmptyDeclaration(n);
+					case EnhancedForControl:
+				      visitEnhancedForControl((EnhancedForControl)n);
 				      break;
-			      EmptyStatement:
-				      visitEmptyStatement(n);
-				      break;
-			      EnhancedForControl:
-				      visitEnhancedForControl(n);
-				      break;
-			      EnumConstant:
+			      /*case EnumConstant:
 				      visitEnumConstant(n);
 				      break;
-			      EnumConstants:
+			      case EnumConstants:
 				      visitEnumConstants(n);
 				      break;
-			      EnumMembers:
+			      case EnumMembers:
 				      visitEnumMembers(n);
+				      break;*/
+					case EqualityExpression:
+				      visitEqualityExpression((EqualityExpression)n);
 				      break;
-			      EqualityExpression:
-				      visitEqualityExpression(n);
+					case ExpressionStatement:
+				      visitExpressionStatement((ExpressionStatement)n);
 				      break;
-			      Expression:
-				      visitExpression(n);
-				      break;
-			      ExpressionList:
-				      visitExpressionList(n);
-				      break;
-			      ExpressionStatement:
-				      visitExpressionStatement(n);
-				      break;
-			      Extension:
+			      /*case Extension:
 				      visitExtension(n);
+				      break;*/
+					case FieldDeclaration:
+				      visitFieldDeclaration((FieldDeclaration)n);
 				      break;
-			      FieldDeclaration:
-				      visitFieldDeclaration(n);
+					case FloatingPointLiteral:
+				      visitFloatingPointLiteral((FloatingPointLiteral)n);
 				      break;
-			      FloatingPointLiteral:
-				      visitFloatingPointLiteral(n);
+					case FormalParameter:
+				      visitFormalParameter((FormalParameter)n);
 				      break;
-			      FormalParameter:
-				      visitFormalParameter(n);
-				      break;
-			      FormalParameters:
+			      /*case FormalParameters:
 				      visitFormalParameters(n);
+				      break;*/
+					case ForStatement:
+				      visitForStatement((ForStatement)n);
 				      break;
-			      ForStatement:
-				      visitForStatement(n);
-				      break;
-			      Implementation:
+			      /*case Implementation:
 				      visitImplementation(n);
 				      break;
-			      ImportDeclaration:
+			      case ImportDeclaration:
 				      visitImportDeclaration(n);
+				      break;*/
+					
+					case InstanceOfExpression:
+				      visitInstanceOfExpression((InstanceOfExpression)n);
 				      break;
-			      InitializationListEntry:
-				      visitInitializationListEntry(n);
-				      break;
-			      InstanceOfExpression:
-				      visitInstanceOfExpression(n);
-				      break;
-			      InstantiatedType:
+					/*case InstantiatedType:
 				      visitInstantiatedType(n);
+				      break;*/
+					case IntegerLiteral:
+				      visitIntegerLiteral((IntegerLiteral)n);
 				      break;
-			      IntegerLiteral:
-				      visitIntegerLiteral(n);
-				      break;
-			      InterfaceDeclaration:
+			      /*case InterfaceDeclaration:
 				      visitInterfaceDeclaration(n);
+				      break;*/
+					case LabeledStatement:
+				      visitLabeledStatement((LabeledStatement)n);
 				      break;
-			      LabeledStatement:
-				      visitLabeledStatement(n);
+					case LogicalAndExpression:
+				      visitLogicalAndExpression((LogicalAndExpression)n);
 				      break;
-			      LogicalAndExpression:
-				      visitLogicalAndExpression(n);
+					case LogicalNegationExpression:
+				      visitLogicalNegationExpression((LogicalNegationExpression)n);
 				      break;
-			      LogicalNegationExpression:
-				      visitLogicalNegationExpression(n);
+					case LogicalOrExpression:
+				      visitLogicalOrExpression((LogicalOrExpression)n);
 				      break;
-			      LogicalOrExpression:
-				      visitLogicalOrExpression(n);
+					case MethodDeclaration:
+				      visitMethodDeclaration((MethodDeclaration)n);
+				      break;			
+					case MultiplicationExpression:
+				      visitMultiplicationExpression((MultiplicationExpression)n);
 				      break;
-			      MethodDeclaration:
-				      visitMethodDeclaration(n);
+					case NewArrayExpression:
+				      visitNewArrayExpression((NewArrayExpression)n);
 				      break;
-			      Modifier:
-				      visitModifier(n);
+					/*case NewClassExpression :
+				      visitNewClassExpression((n);
+				      break;*/
+					case NullLiteral:
+				      visitNullLiteral((NullLiteral)n);
 				      break;
-			      Modifiers:
-				      visitModifiers(n);
+					case PostfixExpression:
+				      visitPostfixExpression((PostfixExpression)n);
 				      break;
-			      MultiplicativeExpression:
-				      visitMultiplicativeExpression(n);
+					case PrimaryIdentifier:
+				      visitPrimaryIdentifier((PrimaryIdentifier)n);
 				      break;
-			      NewArrayExpression:
-				      visitNewArrayExpression(n);
-				      break;
-			      NewClassExpression :
-				      visitNewClassExpression(n);
-				      break;
-			      NullLiteral:
-				      visitNullLiteral(n);
-				      break;
-			      PackageDeclaration:
-				      visitPackageDeclaration(n);
-				      break;
-			      PostfixExpression:
-				      visitPostfixExpression(n);
-				      break;
-			      PrimaryIdentifier:
-				      visitPrimaryIdentifier(n);
-				      break;
-			      PrimitiveType:
+			     /* case PrimitiveType:
 				      visitPrimitiveType(n);
 				      break;
-			      QualifiedIdentifier:
+			     case  QualifiedIdentifier:
 				      visitQualifiedIdentifier(n);
+				      break;*/
+					case RelationalExpression:
+				      visitRelationalExpression((RelationalExpression)n);
 				      break;
-			      RelationalExpression:
-				      visitRelationalExpression(n);
+					case ReturnStatement:
+				      visitReturnStatement((ReturnStatement)n);
 				      break;
-			      ReturnStatement:
-				      visitReturnStatement(n);
+					case SelectionExpression:
+				      visitSelectionExpression((SelectionExpression)n);
 				      break;
-			      SelectionExpression:
-				      visitSelectionExpression(n);
+					case ShiftExpression:
+				      visitShiftExpression((ShiftExpression)n);
 				      break;
-			      ShiftExpression:
-				      visitShiftExpression(n);
+					case StringLiteral:
+				      visitStringLiteral((StringLiteral)n);
 				      break;
-			      SomeCatchClause:
-				      visitSomeCatchClause(n);
-				      break;
-			      SomeDeclaration:
-				      visitSomeDeclaration(n);
-				      break;
-			      SomeDeclarators:
-				      visitSomeDeclarators(n);
-				      break;
-			      SomeExpression:
-				      visitSomeExpression(n);
-				      break;
-			      SomeExpressionList:
-				      visitSomeExpressionList(n);
-				      break;
-			      SomeImportDeclaration:
-				      visitSomeImportDeclaration(n);
-				      break;
-			      SomeModifier:
-				      visitSomeModifier(n);
-				      break;
-			      SomeStatement:
-				      visitSomeStatement(n);
-				      break;
-			      StringLiteral:
-				      visitStringLiteral(n);
-				      break;
-			      SubscriptExpression:
+			      /*SubscriptExpression:
 				      visitSubscriptExpression(n);
+				      break;*/
+					case SuperExpression:
+				      visitSuperExpression((SuperExpression)n);
 				      break;
-			      SuperExpression:
-				      visitSuperExpression(n);
+					case SwitchStatement:
+				      visitSwitchStatement((SwitchStatement)n);
 				      break;
-			      SwitchStatement:
-				      visitSwitchStatement(n);
-				      break;
-			      SynchronizedStatement:
+			      /*case SynchronizedStatement:
 				      visitSynchronizedStatement(n);
 				      break;
-			      ThisExpression:
+			      case ThisExpression:
 				      visitThisExpression(n);
+				      break;*/
+					case ThrowStatement:
+				      visitThrowStatement((ThrowStatement)n);
 				      break;
-			      ThrowsClause:
-				      visitThrowsClause(n);
+					case TryCatchFinallyStatement:
+				      visitTryCatchFinallyStatement((TryCatchFinallyStatement)n);
 				      break;
-			      ThrowStatement:
-				      visitThrowStatement(n);
+			      /*case Type:
+				      visitType(()n);
 				      break;
-			      TryCatchFinallyStatement:
-				      visitTryCatchFinallyStatement(n);
-				      break;
-			      Type:
-				      visitType(n);
-				      break;
-			      TypeArguments:
-				      visitTypeArguments(n);
-				      break;
-			      TypeInstantiation:
-				      visitTypeInstantiation(n);
-				      break;
-			      TypeParameter:
+			      case TypeArguments:
+				      visitTypeArguments(()n);
+				      break;*/
+			      /*case TypeParameter:
 				      visitTypeParameter(n);
 				      break;
-			      TypeParameters:
+			      case TypeParameters:
 				      visitTypeParameters(n);
-				      break;
-			      UnaryExpression:
-				      visitUnaryExpression(n);
-				      break;
-			      VoidType:
+				      break;*/
+			      /*VoidType:
 				      visitVoidType(n);
+				      break;*/
+					case WhileStatement:
+				      visitWhileStatement((WhileStatement)n);
 				      break;
-			      WhileStatement:
-				      visitWhileStatement(n);
-				      break;
-			      Wildcard:
-				      visitWildcard(n);
-				      break;
-			      WildcardBound:
-				      visitWildcardBound(n);
-				      break;
->>>>>>> 0cf43dac463cb0faccbe976bb6b2fbaf165bbc59
+				  default: 
+					  break; 
 			}
-		}*/
+		}
 		return n; 
 	}
 

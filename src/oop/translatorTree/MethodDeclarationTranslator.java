@@ -2,8 +2,9 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
-import oop.translatorTree.*;
-import oop.tree.interfaces.*;
+import oop.tree.*;
+import oop.tree.expressions.*;
+import oop.tree.statements.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -13,55 +14,29 @@ import xtc.Constants;
 import java.util.*;
 import java.io.*;
 
-public class MethodDeclarationTranslator extends DeclarationTranslator
-    implements MethodDeclaration {
+public class MethodDeclarationTranslator extends MethodDeclaration {
 
     private class Input {
 	private MethodT type;
-	private List<Modifier> modifiers = new ArrayList<Modifier>();
+	private List<Modifiers> modifiers = new ArrayList<Modifiers>();
     }
     private class Output {
-	private List<Modifier> modifiers;
+	private List<Modifiers> modifiers;
 	private String methodName;
 	private Type returnType;
 	private List<FormalParameter> formalParameters;
-	private ThrowsClause throwsClause;
-	private BlockTranslator body;
+	//private ThrowsClause throwsClause;
+	private Block body;
     }
     private Input java = new Input();
     private Output cpp = new Output();
     
-    public MethodDeclarationTranslator(TranslatorNode parent) {
-	super(parent);
+    public MethodDeclarationTranslator(CNode parent) {
+	setParent(parent);
+	setName(CppAstUtil.NodeName.MethodDeclaration);
     }
-   
-    /* MethodDeclaration Members */
-    // TODO: fill these out
-    public List<Modifier> getModifiers() {
-	return null;
-    }
-    public Type getReturnType() {
-	return null;
-    }
-    public List<Modifier> getReturnTypeModifiers() {
-	return null;
-    }
-    public String getMethodName() {
-	return java.type.getName();
-    }
-    public List<FormalParameter> getFormalParameters() {
-	return null;
-    }   
-    public ThrowsClause getThrowsClause() {
-	return null;
-    }   
-    public BlockTranslator getMethodBody() {
-	return null;
-    }    
-
-    /* CppAstNode Members */
-    public CppAstUtil.NodeName getNodeType() {
-	return CppAstUtil.NodeName.MethodDeclaration;
+    public MethodDeclarationTranslator() {
+	setName(CppAstUtil.NodeName.MethodDeclaration);
     }
     
     /* TranslatorNode Members */
@@ -69,32 +44,24 @@ public class MethodDeclarationTranslator extends DeclarationTranslator
     
 	// Record scope name
     	String scopeName = n.getStringProperty(Constants.SCOPE);
-	setQualifiedScopeName(scopeName);
+	setScopeName(scopeName);
 	
 	// The MethodT class holds the method's name, return value, param values/identifiers, and exceptions
-	MethodT methodType = Translator.resolveMethodType(this);
-	java.type = methodType;
+	java.type = Translator.resolveMethodType(this);
 	
 	// Get method body
 	Node blockNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Block);
 	if (blockNode != null) {
-	    BlockTranslator block = new BlockTranslator(this);
-	    block.initialize(blockNode);
+	    Block block = (Block) new StatementVisitor(this, scopeName).statementDispatch(blockNode);
 	    cpp.body = block;
 	}
 	
-	// Record if method is private or static. 
+	// Possible modifiers: public, protected, private, static, abstract, final 
 	Node modifiersNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Modifiers);
-	if (modifiersNode != null) {
-	    for (Node modifierNode : JavaAstUtil.getChildrenByName(modifiersNode, JavaAstUtil.NodeName.Modifier)) {
-		String mod = JavaAstUtil.extractString(modifierNode);
-		if (mod.equals("static")) {
-		    java.modifiers.add(Modifier.STATIC);
-		} else if (mod.equals("private")) {
-		    java.modifiers.add(Modifier.PRIVATE);
-		} 
-	    }
-	}
+	//java.modifiers = JavaAstUtil.parseModifiers(modifiersNode);
+	
+	Translator.reportMethodModifiers(java.type, java.modifiers);
+	
     }
     
     /* MethodDeclarationTranslator Members */
@@ -102,10 +69,10 @@ public class MethodDeclarationTranslator extends DeclarationTranslator
 	return java.type;
     }
     public boolean isPrivate() {
-	return (java.modifiers.indexOf(Modifier.PRIVATE) >= 0);
+	return (java.modifiers.indexOf(Modifiers.PRIVATE) >= 0);
     }
     public boolean isStatic() {
-	return (java.modifiers.indexOf(Modifier.STATIC) >= 0);
+	return (java.modifiers.indexOf(Modifiers.STATIC) >= 0);
     }
     public void setMethodName(String name) {
 	java.type = new MethodT(java.type.getResult(), name, java.type.getParameters(), false, java.type.getExceptions());

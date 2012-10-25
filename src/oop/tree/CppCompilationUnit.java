@@ -1,6 +1,6 @@
 package oop.tree;
 
-public class CppCompilationUnit {
+public class CppCompilationUnit extends CNode {
     
    /*
 	To do: design structure

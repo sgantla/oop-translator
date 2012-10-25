@@ -5,8 +5,8 @@ import oop.tree.expressions.*;
 
 public class ForStatement extends Statement {
 
-    ForControl forControl;
-    Statement statement;
+    public ForControl forControl;
+    public Statement statement;
 
     public ForStatement(ForControl forControl, Statement statement) {
         this.forControl= forControl;

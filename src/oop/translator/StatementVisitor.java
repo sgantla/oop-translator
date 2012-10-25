@@ -5,10 +5,12 @@ import oop.translator.*;
 import oop.translatorTree.*;
 import oop.tree.statements.*;
 import oop.tree.expressions.*;
+import oop.tree.*;
 
 import xtc.tree.*;
 import xtc.type.*;
 import xtc.util.*;
+import xtc.Constants;
 
 import java.util.*;
 import java.io.*;
@@ -21,44 +23,47 @@ public class StatementVisitor extends Visitor
         Node booleanExpressionNode = n.getNode(0);
         Node valueExpressionNode = n.getNode(1);
 
+        Expression booleanExpression = null;
         if (booleanExpressionNode != null) {
-            Expression booleanExpression = new ExpressionVisitor().visit(booleanExpressionNode); }
-        else {
-            Expression booleanExpression = null; }
+            booleanExpression = new ExpressionVisitor(currentScopeName).expressionDispatch(booleanExpressionNode); 
+        }
 
-        Expression valueExpression = new ExpressionVisitor().expressionDispatch(valueExpressionNode);
+        Expression valueExpression = new ExpressionVisitor(currentScopeName).expressionDispatch(valueExpressionNode);
 
         return new AssertStatement(booleanExpression, valueExpression);
     }
 
     public BasicForControl visitBasicForControl(Node n) {
-        List<Node> modifiersListNode = null; // n.getNode(0);
+        Node modifiersListNode = n.getNode(0);
         Node typeNode = n.getNode(1);
-        List<Node> declaratorsNode = null; // n.getList(2);
-        List<Node> declaratorExpressionListNode = null; // n.getList(3);
+        Node declaratorsNode = n.getNode(2);
+        Node declaratorExpressionListNode = n.getNode(3);
         Node expressionNode = n.getNode(4);
-        List<Node> expressionListNode = null; // n.getList(5);
+        Node expressionListNode = n.getNode(5);
 
-        List<Modifier> modifiersList = new ArrayList<Modifier>();
+        List<Modifiers> modifiersList = new ArrayList<Modifiers>();
         if (modifiersListNode != null) {
-            for(Node mNode : modifiersListNode) {
-                Modifier modifier = new GeneralVisitor().generalDispatch(mNode);
-                modifiersList.add(modifier);
+            for(Object mNode : modifiersListNode) {
+                if(mNode instanceof Node) {
+                    Modifiers modifier = new GeneralVisitor().visitModifiers((Node)mNode);
+                    modifiersList.add(modifier);
+                }
             }
         }
         else {
             modifiersList = null; }
 
+        Type type = null;
         if (typeNode != null) {
-            Type type = new GeneralVisitor().generalDispatch(typeNode); }
-        else {
-            Type type = null; }
+            type = new GeneralVisitor().visitType(typeNode); }
 
-        List<Declaration> declaratorsList = new ArrayList<Declarator>();
+        List<Statement> declaratorsList = new ArrayList<Statement>();
         if (declaratorsNode != null) {
-            for(Node dNode : declaratorsNode) {
-                Declaration declarator = new GeneralVisitor().generalDispatch(dNode);
-                declaratorsList.add(declarator);
+            for(Object dNode : declaratorsNode) {
+                if(dNode instanceof Node) {
+                    Statement declarator = statementDispatch((Node)dNode);
+                    declaratorsList.add(declarator);
+                }
             }
         }
         else {
@@ -66,24 +71,27 @@ public class StatementVisitor extends Visitor
 
         List<Expression> declaratorExpressionList = new ArrayList<Expression>();
         if (declaratorExpressionListNode != null) {
-            for(Node eNode : declaratorExpressionListNode) {
-                Expression expression = new ExpressionVisitor().expressionDispatch(eNode);
-                declaratorExpressionList.add(expression);
+            for(Object eNode : declaratorExpressionListNode) {
+                if(eNode instanceof Node) {
+                    Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch((Node)eNode);
+                    declaratorExpressionList.add(expression);
+                }
             }
         }
         else {
             declaratorExpressionList = null; }
 
+        Expression expression = null;
         if (expressionNode != null) {
-            Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode); }
-        else {
-            Expression expression = null; }
+            expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode); }
 
         List<Expression> expressionList = new ArrayList<Expression>();
         if (expressionListNode != null) {
-            for(Node eNode : expressionListNode) {
-                Expression expression = new ExpressionVisitor().expressionDispatch(eNode);
-                expressionList.add(expression);
+            for(Object eNode : expressionListNode) {
+                if(eNode instanceof Node ) {
+                    Expression exp = new ExpressionVisitor(currentScopeName).expressionDispatch((Node)eNode);
+                    expressionList.add(exp);
+                }
             }
         }
         else {
@@ -102,23 +110,23 @@ public class StatementVisitor extends Visitor
         Node formalParameterNode = n.getNode(0);
         Node statementNode = n.getNode(1);
 
-        FormalParameter formalParameter = new GeneralVisitor().generalDispatch(formalParameterNode);
+        FormalParameter formalParameter = new GeneralVisitor().visitFormalParameter(formalParameterNode);
         Statement statement = statementDispatch(statementNode);
 
-        return new CatchClause(formalParameter, statementNode);
+        return new CatchClause(formalParameter, statement);
     }
 
     public ConditionalStatement visitConditionalStatement(Node n) {
         //first child is binary expression
         Node expNode = n.getNode(0);
         //second is true statement
-        Node trueStatement = n.getNode(1);
+        Node trueStatementNode = n.getNode(1);
         //third is false statement
-        Node falseStatement = n.getNode(2);
+        Node falseStatementNode = n.getNode(2);
         
-        Expression newExp = new ExpressionVisitor().expressionDispatch(expNode);
-        Statement trueStatement = statementDispatch(trueStatement);
-        Statement falseStatement = statementDispatch(falseStatement);
+        Expression newExp = new ExpressionVisitor(currentScopeName).expressionDispatch(expNode);
+        Statement trueStatement = statementDispatch(trueStatementNode);
+        Statement falseStatement = statementDispatch(falseStatementNode);
 
         return new ConditionalStatement(newExp, trueStatement, falseStatement);
     }
@@ -134,7 +142,7 @@ public class StatementVisitor extends Visitor
         Node expressionNode = n.getNode(1);
 
         Statement statement = statementDispatch(statementNode);
-        Expression expression = new ExpressionNode.expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new DoWhileStatement(statement, expression);
     }
@@ -144,20 +152,22 @@ public class StatementVisitor extends Visitor
     }
 
     public EnhancedForControl visitEnhancedForControl(Node n) {
-        List<Node> modifiersListNode = null; // n.getList(0);
+        Node modifiersListNode = n.getNode(0);
         Node typeNode = n.getNode(1);
         String name = n.getString(2);
         Node expressionNode = n.getNode(3);
 
-        List<Modifier> modifiersList = new ArrayList<Modifier>();
-        for(Node mNode : modifiersListNode) {
-            Modifier modifier = new GeneralVisitor().generalDispatch(mNode);
-            modifiersList.add(modifier);
+        List<Modifiers> modifiersList = new ArrayList<Modifiers>();
+        for(Object mNode : modifiersListNode) {
+            if(mNode instanceof Node) {
+                Modifiers modifier = new GeneralVisitor().visitModifiers((Node)mNode);
+                modifiersList.add(modifier);
+            }
         }
 
-        Type type = new GeneralVisitor().generalDispatch(typeNode);
+        Type type = new GeneralVisitor().visitType(typeNode);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new EnhancedForControl(modifiersList, type, name, expression);
     }
@@ -165,16 +175,16 @@ public class StatementVisitor extends Visitor
     public ExpressionStatement visitExpressionStatement(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new ExpressionStatement(expression);
     }
 
     public ForStatement visitForStatement(Node n) {
         Node forControlNode = n.getNode(0);
-        Statement statementNode = n.getNode(1);
+        Node statementNode = n.getNode(1);
 
-        ForControl forControl = statementDispatch(forControlNode);
+        ForControl forControl = visitBasicForControl(forControlNode);
         Statement statement = statementDispatch(statementNode);
 
         return new ForStatement(forControl, statement);
@@ -192,28 +202,31 @@ public class StatementVisitor extends Visitor
     public ReturnStatement visitReturnStatement(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new ReturnStatement(expression);
     }
 
     public SwitchClause visitSwitchClause(Node n) {
         Node expressionNode = n.getNode(0);
-        List<Node> caseClauseStatementNode = null; // n.getList(1);
-        List<Node> defaultClauseNode = null; // n.getList(2);
+        Node caseClauseStatementNode = n.getNode(1);
+        Node defaultClauseNode = n.getNode(2);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
-        List<DeclarationOrStatement> caseClauseStatement = new ArrayList<DeclarationOrStatement>();
-        for(Node dNode: caseClauseStatementNode) {
-            DeclarationOrStatement declaration = statementDispatch(dNode);
-            caseClauseStatement.add(declaration);
+        List<Statement> caseClauseStatement = new ArrayList<Statement>();
+        for(Object dNode: caseClauseStatementNode) {
+            if(dNode instanceof Node) {
+                Statement declaration = statementDispatch((Node)dNode);
+                caseClauseStatement.add(declaration);
+            }
         }
 
-        List<DeclarationOrStatement> defaultClause = new ArrayList<DeclarationOrStatement>();
-        for(Node dNode: defaultClauseNode) {
-            DeclarationOrStatement declaration = statementDispatch(dNode);
-            defaultClause.add(declaration);
+        List<Statement> defaultClause = new ArrayList<Statement>();
+        for(Object dNode: defaultClauseNode) {
+            if(dNode instanceof Node) {
+                Statement declaration = statementDispatch((Node)dNode);
+                defaultClause.add(declaration); }
         }
 
         return new SwitchClause(expression, caseClauseStatement, defaultClause);
@@ -221,12 +234,16 @@ public class StatementVisitor extends Visitor
 
     public SwitchStatement visitSwitchStatement(Node n) {
         Node expressionNode = n.getNode(0);
-        List<Node> switchClauseListNode = null; // n.getList(1);
+        Node switchClauseListNode = n.getNode(1);
+
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         List<SwitchClause> switchClauseList = new ArrayList<SwitchClause>();
-        for(Node sNode: switchClauseListNode) {
-            SwitchClause switchClause = statementDispatch(sNode);
-            switchClauseList.add(switchClause);
+        for(Object sNode: switchClauseListNode) {
+            if(sNode instanceof Node) {
+                SwitchClause switchClause = visitSwitchClause((Node)sNode);
+                switchClauseList.add(switchClause);
+            }
         }
 
         return new SwitchStatement(expression, switchClauseList);
@@ -235,7 +252,7 @@ public class StatementVisitor extends Visitor
     public ThrowStatement visitThrowStatement(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
 
         return new ThrowStatement(expression);
     }
@@ -244,21 +261,25 @@ public class StatementVisitor extends Visitor
         Node statementNode = n.getNode(0);
         //TODO: im concerned this will not work because the rats documentation sort of makes it seem
         // like there is a list of nodes, each of which has a CatchClause and a Statement
-        List<Node> catchClauseListNode = null; // n.getList(1);
-        List<Node> catchStatementListNode = null; // n.getList(2);
+        Node catchClauseListNode = n.getNode(1);
+        Node catchStatementListNode = n.getNode(2);
 
         Statement statement = statementDispatch(statementNode);
 
         List<CatchClause> catchClauseList = new ArrayList<CatchClause>();
-        for(Node cNode : catchClauseListNode) {
-            CatchClause clause = statementDispatch(cNode);
-            catchClauseList.add(clause);
+        for(Object cNode : catchClauseListNode) {
+            if(cNode instanceof Node) {
+                CatchClause clause = visitCatchClause((Node)cNode);
+                catchClauseList.add(clause);
+            }
         }
 
         List<Statement> catchStatementList = new ArrayList<Statement>();
-        for(Node sNode : catchStatementListNode) {
-            Statement state = statementDispatch(sNode);
-            catchStatementList.add(state);
+        for(Object sNode : catchStatementListNode) {
+            if(sNode instanceof Node) {
+                Statement state = statementDispatch((Node)sNode);
+                catchStatementList.add(state);
+            }
         }
 
         return new TryCatchFinallyStatement(statement, catchClauseList, catchStatementList);
@@ -268,22 +289,61 @@ public class StatementVisitor extends Visitor
         Node expressionNode = n.getNode(0);
         Node statementNode = n.getNode(1);
 
-        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Expression expression = new ExpressionVisitor(currentScopeName).expressionDispatch(expressionNode);
         Statement statement = statementDispatch(statementNode);
 
         return new WhileStatement(expression, statement);
     }
 
-    public Statement statementDispatch(Node n)
-    {
-        Object o = super.dispatch(n);
-        return (Statement) o;
+    public Statement statementDispatch(Node n) {	
+    
+	boolean newScopeEntered = false;
+	String lastScopeName = null;
+	if (SymbolTable.hasScope(n)) {
+	    String scopeName = n.getStringProperty(Constants.SCOPE);
+	    lastScopeName = currentScopeName;
+	    currentScopeName = scopeName;
+	    newScopeEntered = true;
+	}
+	
+        Statement statement = (Statement) dispatch(n);
+        
+	if (newScopeEntered) {
+	    currentScopeName = lastScopeName;
+	}
+	
+        return statement;
     }
-    /*
-    public Statement dispatch(Node n)
-    {
-        Object o = super.visit(n);
-        return (Statement) o;
+    
+    public Block visitBlock(Node n) {
+	
+	List<Statement> statements = new ArrayList<Statement>();
+	
+	for (Object child : n) {
+	    if (child instanceof Node) {
+		Node childNode = (Node) child;
+		statements.add(statementDispatch(childNode));
+	    }
+	}
+	
+	return new Block(statements);
     }
-    */
+
+    public StatementVisitor(CNode n, String scope) {
+	
+	currentParent = n;
+	currentScopeName = scope;
+    }
+    
+    public StatementVisitor(CNode n) {
+	
+	currentParent = n;
+    }
+    
+    public StatementVisitor() {
+	
+    }
+    
+    private CNode currentParent;
+    private String currentScopeName;
 }

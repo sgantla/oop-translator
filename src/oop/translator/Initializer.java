@@ -3,7 +3,7 @@ package oop.translator;
 import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
-import oop.tree.interfaces.*;
+import oop.tree.expressions.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -12,13 +12,12 @@ import xtc.util.*;
 import java.util.*;
 import java.io.*;
 
-public class InitializationField 
-    implements InitializationListEntry {
-    
+public class Initializer {
+  
     private FieldDeclarationTranslator fieldDeclaration;
-    private ExpressionTranslator expression;
+    private Expression expression;
     
-    public InitializationField(FieldDeclarationTranslator fieldDeclaration, ExpressionTranslator expression) {
+    public Initializer(FieldDeclarationTranslator fieldDeclaration, Expression expression) {
 	this.fieldDeclaration = fieldDeclaration;
 	this.expression = expression;
     }
@@ -27,7 +26,7 @@ public class InitializationField
 	return fieldDeclaration;
     }
     
-    public ExpressionTranslator getExpression() {
+    public Expression getExpression() {
 	return expression;
     }
     

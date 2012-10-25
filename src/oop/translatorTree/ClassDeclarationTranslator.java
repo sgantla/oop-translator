@@ -2,9 +2,9 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
-import oop.translatorTree.*;
-import oop.tree.interfaces.*;
-import oop.tree.Modifier;
+import oop.tree.*;
+import oop.tree.expressions.*;
+import oop.tree.statements.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -14,8 +14,7 @@ import xtc.util.*;
 import java.util.*;
 import java.io.*;
 
-public class ClassDeclarationTranslator extends DeclarationTranslator 
-implements ClassDeclaration {
+public class ClassDeclarationTranslator extends ClassDeclaration {
 
 	private class Input { 
 		List<String> modifiers = new ArrayList<String>();	
@@ -23,7 +22,7 @@ implements ClassDeclaration {
 		String extension;
 	}
 	private class Output {
-		List<Modifier> modifiers = new ArrayList<Modifier>();	
+		List<Modifiers> modifiers = new ArrayList<Modifiers>();	
 		List<String> extensions = new ArrayList<String>();	
 		String className;
 		ClassBodyTranslator classBody;
@@ -31,12 +30,16 @@ implements ClassDeclaration {
 	private Input java = new Input();
 	private Output cpp = new Output();
 
-	public ClassDeclarationTranslator(TranslatorNode parent) {
-		super(parent);
+	public ClassDeclarationTranslator(CNode parent) {
+	    setParent(parent);
+	    setName(CppAstUtil.NodeName.ClassDeclaration);
+	}
+	public ClassDeclarationTranslator() {
+	    setName(CppAstUtil.NodeName.ClassDeclaration);
 	}
 
 	/* ClassDeclaration Members */
-	public List<Modifier> getModifiers() {
+	public List<Modifiers> getModifiers() {
 		return cpp.modifiers;
 	}
 	public String getClassName() {
@@ -47,11 +50,6 @@ implements ClassDeclaration {
 	}
 	public ClassBody getClassBody() {
 		return cpp.classBody;
-	}
-
-	/* CppAstNode Members */
-	public CppAstUtil.NodeName getNodeType () {
-		return CppAstUtil.NodeName.ClassDeclaration;
 	}
 
 	/* TranslatorNode Members */
@@ -66,7 +64,7 @@ implements ClassDeclaration {
 		// Get class name
 		java.className = n.getString(1);
 		cpp.className = java.className;
-		cpp.modifiers.add(Modifier.PUBLIC); // All classes will be public 
+		cpp.modifiers.add(Modifiers.PUBLIC); // All classes will be public 
 
 		// Create ClassBodyTranslator child
 		Node classBodyNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.ClassBody);
