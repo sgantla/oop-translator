@@ -23,4 +23,9 @@ public class CallExpression extends UnaryExpression {
         this.name = name;
         this.arguments = args;
     }
+
+    public Type getReturnType() {
+        this.returnType = expression.getReturnType();
+        return returnType;
+    }
 }
