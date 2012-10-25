@@ -1,0 +1,7 @@
+Java to C++ translator.
+
+To compile with the jar:
+    javac -cp xtc.jar ProgramName.java
+
+To run with the jar:
+    java -cp .:xtc.jar ProgramName
