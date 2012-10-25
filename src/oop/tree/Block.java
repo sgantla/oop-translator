@@ -26,4 +26,8 @@ import java.util.List;
 public class Block extends Statement {
 
     public List<Statement> statements;
+    
+    public Block(List<Statement> statements) {
+	this.statements = statements;
+    }
 }

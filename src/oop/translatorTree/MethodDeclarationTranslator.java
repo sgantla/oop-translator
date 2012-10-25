@@ -2,6 +2,9 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
+import oop.tree.*;
+import oop.tree.expressions.*;
+import oop.tree.statements.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -15,15 +18,15 @@ public class MethodDeclarationTranslator extends MethodDeclaration {
 
     private class Input {
 	private MethodT type;
-	private List<Modifier> modifiers = new ArrayList<Modifier>();
+	private List<Modifiers> modifiers = new ArrayList<Modifiers>();
     }
     private class Output {
-	private List<Modifier> modifiers;
+	private List<Modifiers> modifiers;
 	private String methodName;
 	private Type returnType;
 	private List<FormalParameter> formalParameters;
-	private ThrowsClause throwsClause;
-	private BlockTranslator body;
+	//private ThrowsClause throwsClause;
+	private Block body;
     }
     private Input java = new Input();
     private Output cpp = new Output();
@@ -35,30 +38,6 @@ public class MethodDeclarationTranslator extends MethodDeclaration {
     public MethodDeclarationTranslator() {
 	setName(CppAstUtil.NodeName.MethodDeclaration);
     }
-   
-    /* MethodDeclaration Members */
-    // TODO: fill these out
-    public List<Modifier> getModifiers() {
-	return null;
-    }
-    public Type getReturnType() {
-	return null;
-    }
-    public List<Modifier> getReturnTypeModifiers() {
-	return null;
-    }
-    public String getMethodName() {
-	return java.type.getName();
-    }
-    public List<FormalParameter> getFormalParameters() {
-	return null;
-    }   
-    public ThrowsClause getThrowsClause() {
-	return null;
-    }   
-    public BlockTranslator getMethodBody() {
-	return null;
-    }    
     
     /* TranslatorNode Members */
     public void initialize(Node n) {
@@ -73,13 +52,13 @@ public class MethodDeclarationTranslator extends MethodDeclaration {
 	// Get method body
 	Node blockNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Block);
 	if (blockNode != null) {
-	    Block block = new StatementVisitor(this, scopeName).statementDispatch(blockNode);
+	    Block block = (Block) new StatementVisitor(this, scopeName).statementDispatch(blockNode);
 	    cpp.body = block;
 	}
 	
 	// Possible modifiers: public, protected, private, static, abstract, final 
 	Node modifiersNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Modifiers);
-	java.modifiers = JavaAstUtil.parseModifiers(modifiersNode);
+	//java.modifiers = JavaAstUtil.parseModifiers(modifiersNode);
 	
 	Translator.reportMethodModifiers(java.type, java.modifiers);
 	
@@ -90,10 +69,10 @@ public class MethodDeclarationTranslator extends MethodDeclaration {
 	return java.type;
     }
     public boolean isPrivate() {
-	return (java.modifiers.indexOf(Modifier.PRIVATE) >= 0);
+	return (java.modifiers.indexOf(Modifiers.PRIVATE) >= 0);
     }
     public boolean isStatic() {
-	return (java.modifiers.indexOf(Modifier.STATIC) >= 0);
+	return (java.modifiers.indexOf(Modifiers.STATIC) >= 0);
     }
     public void setMethodName(String name) {
 	java.type = new MethodT(java.type.getResult(), name, java.type.getParameters(), false, java.type.getExceptions());

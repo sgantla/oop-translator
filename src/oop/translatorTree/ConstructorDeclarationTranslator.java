@@ -2,6 +2,9 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
+import oop.tree.*;
+import oop.tree.expressions.*;
+import oop.tree.statements.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -15,9 +18,10 @@ public class ConstructorDeclarationTranslator extends ConstructorDeclaration {
     
     private class Input {
 	private MethodT type;
+	private List<Modifiers> modifiers;
     }
     private class Output {
-	private BlockTranslator body;
+	private Block body;
     }
     private Input java = new Input();
     private Output cpp = new Output();
@@ -29,13 +33,6 @@ public class ConstructorDeclarationTranslator extends ConstructorDeclaration {
     public ConstructorDeclarationTranslator() {
 	setName(CppAstUtil.NodeName.ConstructorDeclaration);
     }
-
-    /* ConstructorDeclaration Members */
-    public List<Modifier> getModifiers() {return null;}
-    public String getName() {return null;}
-    public List<FormalParameter> getFormalParameters() {return null;}
-    public List<InitializationListEntry> getInitializations() {return null;}
-    public BlockTranslator getConstructorBody() {return cpp.body;}
     
     /* TranslatorNode Members */
     public void initialize(Node n) {
@@ -51,13 +48,13 @@ public class ConstructorDeclarationTranslator extends ConstructorDeclaration {
 	// Get method body
 	Node blockNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Block);
 	if (blockNode != null) {
-	    Block block = new StatementVisitor(this, scopeName).statementDispatch(blockNode);
+	    Block block = (Block) new StatementVisitor(this, scopeName).statementDispatch(blockNode);
 	    cpp.body = block;
 	}
 	
 	// Possible modifiers: public, protected, private
 	Node modifiersNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Modifiers);
-	java.modifiers = JavaAstUtil.parseModifiers(modifiersNode);
+	java.modifiers = new ArrayList<Modifiers>(); //JavaAstUtil.parseModifiers(modifiersNode);
 	
 	Translator.reportMethodModifiers(java.type, java.modifiers);
     }

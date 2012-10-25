@@ -297,8 +297,8 @@ public class StatementVisitor extends Visitor
 
     public Statement statementDispatch(Node n) {	
     
-	boolean newScopeEntered;
-	String lastScopeName;
+	boolean newScopeEntered = false;
+	String lastScopeName = null;
 	if (SymbolTable.hasScope(n)) {
 	    String scopeName = n.getStringProperty(Constants.SCOPE);
 	    lastScopeName = currentScopeName;

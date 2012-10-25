@@ -13,7 +13,6 @@ public class CallExpression extends UnaryExpression {
 
     // expression is opt
     public List<Type> typeArguments; //opt
-    public TypeArgument typeArguments; //opt
     public String name;
     public List<Expression> arguments;
 

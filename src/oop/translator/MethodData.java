@@ -12,30 +12,21 @@ import java.util.*;
 import java.io.*;
 
 public class MethodData {
-    private String methodName;
+
     private MethodT methodType;
     private ClassT classType;
     
     public boolean equals(Object otherData) {
 	if (otherData instanceof MethodData) {
-	    return methodName.equals(((MethodData)otherData).methodName);
+	    return this.getMethodName().equals(((MethodData)otherData).getMethodName());
 	} else {
-	    return otherData.equals(this);
+	    return super.equals(otherData);
 	}
     }
     
     public MethodData(MethodT methodType, ClassT classType) {
-	this.methodName = methodType.getName();
 	this.methodType = methodType;
 	this.classType = classType;
-    }
-    
-    public MethodData(String methodName) {
-	this.methodName = methodName;
-    }
-    
-    public String getMethodName() {
-	return methodName;
     }
     
     public MethodT getMethodType() {
@@ -46,8 +37,11 @@ public class MethodData {
 	return classType;
     }
     
+    public String getMethodName() {
+	return this.methodType.getName();
+    }
+    
     public void setMethodName(String methodName) {
-	this.methodName = methodName;
 	this.methodType = new MethodT(this.methodType.getResult(), methodName, this.methodType.getParameters(), false, this.methodType.getExceptions());
     }
     
@@ -57,5 +51,9 @@ public class MethodData {
     
     public void setClassType(ClassT classType) {
 	this.classType = classType;
+    }
+    
+    public MethodData deepCopy() {
+	return new MethodData(methodType.copy(), classType.copy());
     }
 }

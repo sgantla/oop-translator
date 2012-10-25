@@ -469,6 +469,6 @@ public class ExpressionVisitor extends Visitor
     }
     
     private String scopeName;
-    private bool firstExpression = true;
+    private boolean firstExpression = true;
 
 }

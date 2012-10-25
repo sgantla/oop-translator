@@ -2,6 +2,9 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
+import oop.tree.*;
+import oop.tree.expressions.*;
+import oop.tree.statements.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -19,7 +22,7 @@ public class ClassDeclarationTranslator extends ClassDeclaration {
 		String extension;
 	}
 	private class Output {
-		List<Modifier> modifiers = new ArrayList<Modifier>();	
+		List<Modifiers> modifiers = new ArrayList<Modifiers>();	
 		List<String> extensions = new ArrayList<String>();	
 		String className;
 		ClassBodyTranslator classBody;
@@ -36,7 +39,7 @@ public class ClassDeclarationTranslator extends ClassDeclaration {
 	}
 
 	/* ClassDeclaration Members */
-	public List<Modifier> getModifiers() {
+	public List<Modifiers> getModifiers() {
 		return cpp.modifiers;
 	}
 	public String getClassName() {
@@ -61,7 +64,7 @@ public class ClassDeclarationTranslator extends ClassDeclaration {
 		// Get class name
 		java.className = n.getString(1);
 		cpp.className = java.className;
-		cpp.modifiers.add(Modifier.PUBLIC); // All classes will be public 
+		cpp.modifiers.add(Modifiers.PUBLIC); // All classes will be public 
 
 		// Create ClassBodyTranslator child
 		Node classBodyNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.ClassBody);
