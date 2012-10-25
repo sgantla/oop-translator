@@ -1,6 +1,6 @@
 package oop.tree;
 
-import xtc.tree.*;
+import xtc.type.*;
 
 public class PrimitiveType extends Type {
 
