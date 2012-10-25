@@ -61,17 +61,6 @@ public class ConstructorDeclarationTranslator extends ConstructorDeclaration {
 	
 	Translator.reportMethodModifiers(java.type, java.modifiers);
     }
-    
-    /* ConstructorDeclarationTranslator Members */
-    public void setInitializationList(List<InitializationField> list) {}
-    public void prependStatementBlock(BlockTranslator block) {}
-    public MethodT getMethodType() {return null;}
-    public static ConstructorDeclarationTranslator newEmptyConstructor(ClassT classType, TranslatorNode parent) {
-   
-	//MethodT method = MethodT(null, classType.getName(), new List<Type>(), false, new List<Type>());
-	return null; // Not implemented
-    }
-    
 }
 
 

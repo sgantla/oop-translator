@@ -88,9 +88,9 @@ public class Translator {
 	return conflictingMethod.getName(); 
     }
     
-    public static MethodT resolveMethodType(TranslatorNode method) {
+    public static MethodT resolveMethodType(MethodDeclarationTranslator method) {
 	
-	String scopeName = method.getQualifiedScopeName();
+	String scopeName = method.getScopeName();
 	SymbolTable.Scope scope = masterSymbolTable.getScope(scopeName);
 	SymbolTable.Scope classScope = scope.getParent();
 	
@@ -104,7 +104,7 @@ public class Translator {
 	return null;
     }
     
-    public static Type resolveDeclaratorType(String declarator, TranslatorNode node) {
+    public static Type resolveDeclaratorType(String declarator, CNode node) {
 	
 	// Find closest scope
 	String qualifiedScopeName = null;
