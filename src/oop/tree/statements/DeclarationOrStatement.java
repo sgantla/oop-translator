@@ -12,16 +12,24 @@ import xtc.tree.Location;
 import xtc.tree.Locatable;
 import xtc.type.*;
 import xtc.tree.*; 
-public class DeclarationOrStatement {
+public class DeclarationOrStatement extends Statement {
 
-    public Statement statement; 
+    public Declaration declaration;
+    public Statement statement;
+
+    public DeclarationOrStatement(Declaration declaration) {
+        this.declaration = declaration;
+        statement = null;
+    }
 
     public DeclarationOrStatement(Statement statement) {
         this.statement = statement;
+        this.declaration = null;
     }
 
     public DeclarationOrStatement(Declaration declaration, Statement statement) {
         this.statement = statement;
+        this.declaration = declaration;
     }
 }
 

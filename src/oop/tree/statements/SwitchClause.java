@@ -11,9 +11,10 @@ import java.io.*;
 
 public class SwitchClause extends Statement {
 
-    Expression caseClauseExpression;
-    List<Statement> caseClauseStatements;
-    List<Statement> defaultClause;
+	public Expression caseClauseExpression;
+    public List<DeclarationOrStatement> caseClauseStatements;
+    public List<DeclarationOrStatement> defaultClause;
+
 
     public SwitchClause(Expression exp, List<Statement> caseClauseStatements, List<Statement> defaultClause) {
         caseClauseExpression = exp;

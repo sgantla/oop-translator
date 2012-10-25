@@ -7,8 +7,8 @@ import java.util.List;
 
 public class SwitchStatement extends Statement {
 
-    Expression expression;
-    List<SwitchClause> switchClause;
+    public Expression expression;
+    public List<SwitchClause> switchClause;
 
     public SwitchStatement(Expression exp, List<SwitchClause> switchClause) {
         expression = exp;

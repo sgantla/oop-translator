@@ -9,7 +9,7 @@ import xtc.type.*;
 
 public class FloatingPointLiteral extends Literal {
 
-    String value;
+    public String value;
     
     public FloatingPointLiteral(String value) {
         this.value = value;

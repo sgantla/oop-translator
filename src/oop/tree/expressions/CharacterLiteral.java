@@ -9,7 +9,7 @@ import xtc.type.*;
 
 public class CharacterLiteral extends Literal {
 
-    String value;
+    public String value;
     
     public CharacterLiteral(String value) {
         this.value = value;

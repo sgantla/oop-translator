@@ -9,7 +9,7 @@ import xtc.type.*;
 
 public class BooleanLiteral extends Literal {
 
-    String value;
+    public String value;
 
     public BooleanLiteral(String value) {
         this.value = value;

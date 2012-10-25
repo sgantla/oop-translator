@@ -12,10 +12,10 @@ import java.util.List;
 public class NewClassExpression extends UnaryExpression {
 
     //opt expression
-    TypeArgument typeArgument; //opt
-    TypeName typeName;
-    List<Expression> arguments;
-    ClassBody classBody;  //opt
+    public TypeArgument typeArgument; //opt
+    public TypeName typeName;
+    public List<Expression> arguments;
+    public ClassBody classBody;  //opt
     public NewClassExpression(Expression expression, TypeArgument typeArgument, TypeName typeName,
             List<Expression> arguments, ClassBody classBody) {
 
