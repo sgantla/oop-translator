@@ -14,4 +14,13 @@ public class PrimitiveType extends Type {
 	FLOAT,      // float
 	DOUBLE;     // double
     }
+
+    public Type.Tag tag() {
+
+        return null;
+    }
+    public Type copy() {
+        return null;
+    }
+
 }
