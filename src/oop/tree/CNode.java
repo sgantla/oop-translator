@@ -1,23 +1,40 @@
 package oop.tree;
 import oop.translator.CppAstUtil;
+import xtc.type.Type;
+import xtc.tree.Location;
 
-<<<<<<< HEAD
 public abstract class CNode {
 
-    CNode _parent;
+    private CNode parent;
+    private Location location;
+    private String scopeName;
     CppAstUtil.NodeName name;
     
     public CppAstUtil.NodeName getName() {
       return this.name;
-=======
-public abstract class CNode
-{
-    private CNode parent;
+    }
+    public void setName(CppAstUtil.NodeName name) {
+	this.name = name;
+    }
+
+    public void setLocation(Location location) {
+	this.location = location;
+    }
+    public Location getLocation() {
+	return this.location;
+    }
+    
+    public void setScopeName(String scopeName) {
+	this.scopeName = scopeName;
+    }
+    public String getScopeName() {
+	return scopeName;
+    }
+    
     public CNode getParent() {
 	return parent;
     }
-    public CNode setParent(CNode parent) {
+    public void setParent(CNode parent) {
 	this.parent = parent;
->>>>>>> 8e25523a345fe15d92add84f0a2eb678949aa96e
     }
 }
