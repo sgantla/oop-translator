@@ -6,15 +6,15 @@ import oop.tree.statements.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
+import xtc.type.*;
+
 public class ShiftExpression extends BinaryExpression {
 
     public ShiftExpression(Expression left, String operator, Expression right) {
         leftExpression = left;
         rightExpression = right;
         this.operator = operator;
-    }
 
-    public Type getReturnType() {
-        return returnType;
+
     }
 }

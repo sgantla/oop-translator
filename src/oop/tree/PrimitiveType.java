@@ -1,5 +1,7 @@
 package oop.tree;
 
+import xtc.type.*;
+
 public class PrimitiveType extends Type {
 
     enum PrimitiveEnum {

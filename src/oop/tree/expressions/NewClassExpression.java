@@ -5,6 +5,8 @@ import oop.tree.statements.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
+import xtc.type.*;
+
 import java.util.List;
 
 public class NewClassExpression extends UnaryExpression {
@@ -22,9 +24,5 @@ public class NewClassExpression extends UnaryExpression {
         this.typeName = typeName;
         this.arguments = arguments;
         this.classBody = classBody;
-    }
-
-    public Type getReturnType() {
-        return returnType;
     }
 }

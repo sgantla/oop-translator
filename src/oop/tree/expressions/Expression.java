@@ -6,6 +6,8 @@ import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
+import xtc.type.*;
+
 import java.util.*;
 
 // TODO: do we need this to implement CppAstNode?

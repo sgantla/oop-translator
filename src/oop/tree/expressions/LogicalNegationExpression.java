@@ -6,12 +6,13 @@ import oop.tree.statements.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
+import xtc.type.*;
 
 public class LogicalNegationExpression extends UnaryExpression {
 
     public LogicalNegationExpression(Expression expression, String operator) {
         this.expression = expression;
         operator = "!";
-        //returnType = new Boolean();
+        returnType = BooleanT.TYPE;
     }
 }

@@ -3,6 +3,8 @@ package oop.tree.statements;
 import oop.tree.*;
 import oop.tree.expressions.*;
 
+import xtc.type.*;
+
 import java.util.List;
 
 public class EnhancedForControl extends ForControl {

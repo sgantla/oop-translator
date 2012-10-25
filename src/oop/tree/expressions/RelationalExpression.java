@@ -15,6 +15,6 @@ public class RelationalExpression extends BinaryExpression {
         leftExpression = leftExp;
         this.operator = operator;
         rightExpression = rightExp;
-        //returnType = new Boolean();
+        returnType = BooleanT.TYPE;
     }
 }

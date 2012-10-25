@@ -6,12 +6,29 @@ import oop.tree.statements.*;
 import oop.translator.*;
 import oop.translatorTree.*;
 
+import xtc.type.*;
+
 public class BitwiseOrExpression extends BinaryExpression {
 
     public BitwiseOrExpression(Expression left, String operator, Expression right) {
         leftExpression = left;
         rightExpression = right;
         operator = "|";
-        //returnType = new Boolean();
+    }
+
+    public Type getReturnType() {
+        if(leftExpression.getReturnType() == BooleanT.TYPE)
+            returnType = BooleanT.TYPE;
+        else {
+            NumberT.Kind leftReturn = ((NumberT)leftExpression.getReturnType()).getKind();
+            NumberT.Kind rightReturn = ((NumberT)rightExpression.getReturnType()).getKind();
+
+            if(leftReturn.compareTo(rightReturn) < 0)
+                returnType = rightExpression.getReturnType(); 
+            else
+                returnType = leftExpression.getReturnType(); 
+        }
+
+        return returnType;
     }
 }
