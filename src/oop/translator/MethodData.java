@@ -36,6 +36,14 @@ public class MethodData {
     public ClassT getClassType() {
 	return classType;
     }
+
+    public List<Type> getParameters() {
+        return methodType.getParameters();
+    }
+    
+    public Type getReturnType() {
+        return methodType.getResult();
+    }
     
     public String getMethodName() {
 	return this.methodType.getName();

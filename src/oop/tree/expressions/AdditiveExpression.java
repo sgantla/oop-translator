@@ -15,18 +15,21 @@ public class AdditiveExpression extends BinaryExpression {
         leftExpression = left;
         rightExpression = right;
 
+    }
+
+    public Type getReturnType() {
         if (leftExpression.getReturnType() instanceof IntegerT && rightExpression.getReturnType() instanceof IntegerT) {
 
-        NumberT.Kind leftReturn = ((IntegerT)left.getReturnType()).getKind();
-        NumberT.Kind rightReturn = ((IntegerT)right.getReturnType()).getKind();
+            NumberT.Kind leftReturn = ((IntegerT)left.getReturnType()).getKind();
+            NumberT.Kind rightReturn = ((IntegerT)right.getReturnType()).getKind();
 
-        if(leftReturn.compareTo(rightReturn) < 0)
-            returnType = rightExpression.getReturnType();
-        else
-            returnType = leftExpression.getReturnType();
+            if(leftReturn.compareTo(rightReturn) < 0)
+                returnType = rightExpression.getReturnType();
+            else
+                returnType = leftExpression.getReturnType();
+            }
+        else { // returnType is string
         }
-        else {
-            // returnType is string
-        }
+        return returnType;    
     }
 }
