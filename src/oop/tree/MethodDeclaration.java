@@ -3,6 +3,8 @@ package oop.tree;
 import oop.tree.expressions.*;
 import oop.tree.statements.*;
 
+import xtc.type.Type; 
+
 import java.util.ArrayList;
 import java.util.List;
 

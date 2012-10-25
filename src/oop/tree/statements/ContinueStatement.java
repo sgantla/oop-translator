@@ -5,7 +5,7 @@ import oop.tree.expressions.*;
 
 public class ContinueStatement extends Statement {
 
-    String label;
+    public String label;
 
     public ContinueStatement(String label) {
         this.label = label;

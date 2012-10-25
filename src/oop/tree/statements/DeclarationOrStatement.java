@@ -13,10 +13,10 @@ import xtc.tree.Location;
 import xtc.tree.Locatable;
 import xtc.type.*;
 import xtc.tree.*; 
-public class DeclarationOrStatement {
+public class DeclarationOrStatement extends Statement {
 
-    Declaration declaration;
-    Statement statement;
+    public Declaration declaration;
+    public Statement statement;
 
     public DeclarationOrStatement(Declaration declaration) {
         this.declaration = declaration;
