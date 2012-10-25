@@ -26,7 +26,7 @@ public class StatementVisitor extends Visitor
         else {
             Expression booleanExpression = null; }
 
-        Expression valueExpression = new ExpressionVisitor().visit(valueExpressionNode);
+        Expression valueExpression = new ExpressionVisitor().expressionDispatch(valueExpressionNode);
 
         return new AssertStatement(booleanExpression, valueExpression);
     }
@@ -42,7 +42,7 @@ public class StatementVisitor extends Visitor
         List<Modifier> modifiersList = new ArrayList<Modifier>();
         if (modifiersListNode != null) {
             for(Node mNode : modifiersListNode) {
-                Modifier modifier = new GeneralVisitor().visit(mNode);
+                Modifier modifier = new GeneralVisitor().generalDispatch(mNode);
                 modifiersList.add(modifier);
             }
         }
@@ -50,14 +50,14 @@ public class StatementVisitor extends Visitor
             modifiersList = null; }
 
         if (typeNode != null) {
-            Type type = new GeneralVisitor().visit(typeNode); }
+            Type type = new GeneralVisitor().generalDispatch(typeNode); }
         else {
             Type type = null; }
 
         List<Declaration> declaratorsList = new ArrayList<Declarator>();
         if (declaratorsNode != null) {
             for(Node dNode : declaratorsNode) {
-                Declaration declarator = new GeneralVisitor().visit(dNode);
+                Declaration declarator = new GeneralVisitor().generalDispatch(dNode);
                 declaratorsList.add(declarator);
             }
         }
@@ -67,7 +67,7 @@ public class StatementVisitor extends Visitor
         List<Expression> declaratorExpressionList = new ArrayList<Expression>();
         if (declaratorExpressionListNode != null) {
             for(Node eNode : declaratorExpressionListNode) {
-                Expression expression = new ExpressionVisitor().visit(eNode);
+                Expression expression = new ExpressionVisitor().expressionDispatch(eNode);
                 declaratorExpressionList.add(expression);
             }
         }
@@ -75,14 +75,14 @@ public class StatementVisitor extends Visitor
             declaratorExpressionList = null; }
 
         if (expressionNode != null) {
-            Expression expression = new ExpressionVisitor().visit(expressionNode); }
+            Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode); }
         else {
             Expression expression = null; }
 
         List<Expression> expressionList = new ArrayList<Expression>();
         if (expressionListNode != null) {
             for(Node eNode : expressionListNode) {
-                Expression expression = new ExpressionVisitor().visit(eNode);
+                Expression expression = new ExpressionVisitor().expressionDispatch(eNode);
                 expressionList.add(expression);
             }
         }
@@ -102,8 +102,8 @@ public class StatementVisitor extends Visitor
         Node formalParameterNode = n.getNode(0);
         Node statementNode = n.getNode(1);
 
-        FormalParameter formalParameter = new GeneralVisitor().visit(formalParameterNode);
-        Statement statement = visit(statementNode);
+        FormalParameter formalParameter = new GeneralVisitor().generalDispatch(formalParameterNode);
+        Statement statement = statementDispatch(statementNode);
 
         return new CatchClause(formalParameter, statementNode);
     }
@@ -116,9 +116,9 @@ public class StatementVisitor extends Visitor
         //third is false statement
         Node falseStatement = n.getNode(2);
         
-        Expression newExp = new ExpressionVisitor().visit(expNode);
-        Statement trueStatement = visit(trueStatement);
-        Statement falseStatement = visit(falseStatement);
+        Expression newExp = new ExpressionVisitor().expressionDispatch(expNode);
+        Statement trueStatement = statementDispatch(trueStatement);
+        Statement falseStatement = statementDispatch(falseStatement);
 
         return new ConditionalStatement(newExp, trueStatement, falseStatement);
     }
@@ -133,8 +133,8 @@ public class StatementVisitor extends Visitor
         Node statementNode = n.getNode(0);
         Node expressionNode = n.getNode(1);
 
-        Statement statement = visit(statementNode);
-        Expression expression = new ExpressionNode.visit(expressionNode);
+        Statement statement = statementDispatch(statementNode);
+        Expression expression = new ExpressionNode.expressionDispatch(expressionNode);
 
         return new DoWhileStatement(statement, expression);
     }
@@ -151,13 +151,13 @@ public class StatementVisitor extends Visitor
 
         List<Modifier> modifiersList = new ArrayList<Modifier>();
         for(Node mNode : modifiersListNode) {
-            Modifier modifier = new GeneralVisitor().visit(mNode);
+            Modifier modifier = new GeneralVisitor().generalDispatch(mNode);
             modifiersList.add(modifier);
         }
 
-        Type type = new GeneralVisitor().visit(typeNode);
+        Type type = new GeneralVisitor().generalDispatch(typeNode);
 
-        Expression expression = new ExpressionVisitor().visit(expressionNode);
+        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
 
         return new EnhancedForControl(modifiersList, type, name, expression);
     }
@@ -165,7 +165,7 @@ public class StatementVisitor extends Visitor
     public ExpressionStatement visitExpressionStatement(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = new ExpressionVisitor().visit(expressionNode);
+        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
 
         return new ExpressionStatement(expression);
     }
@@ -174,8 +174,8 @@ public class StatementVisitor extends Visitor
         Node forControlNode = n.getNode(0);
         Statement statementNode = n.getNode(1);
 
-        ForControl forControl = visit(forControlNode);
-        Statement statement = visit(statementNode);
+        ForControl forControl = statementDispatch(forControlNode);
+        Statement statement = statementDispatch(statementNode);
 
         return new ForStatement(forControl, statement);
     }
@@ -184,7 +184,7 @@ public class StatementVisitor extends Visitor
         String label = n.getString(0);
         Node statementNode = n.getNode(1);
 
-        Statement statement = visit(statementNode);
+        Statement statement = statementDispatch(statementNode);
 
         return new LabeledStatement(label, statement);
     }
@@ -192,7 +192,7 @@ public class StatementVisitor extends Visitor
     public ReturnStatement visitReturnStatement(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = new ExpressionVisitor().visit(expressionNode);
+        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
 
         return new ReturnStatement(expression);
     }
@@ -202,17 +202,17 @@ public class StatementVisitor extends Visitor
         List<Node> caseClauseStatementNode = null; // n.getList(1);
         List<Node> defaultClauseNode = null; // n.getList(2);
 
-        Expression expression = new ExpressionVisitor().visit(expressionNode);
+        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
 
         List<DeclarationOrStatement> caseClauseStatement = new ArrayList<DeclarationOrStatement>();
         for(Node dNode: caseClauseStatementNode) {
-            DeclarationOrStatement declaration = visit(dNode);
+            DeclarationOrStatement declaration = statementDispatch(dNode);
             caseClauseStatement.add(declaration);
         }
 
         List<DeclarationOrStatement> defaultClause = new ArrayList<DeclarationOrStatement>();
         for(Node dNode: defaultClauseNode) {
-            DeclarationOrStatement declaration = visit(dNode);
+            DeclarationOrStatement declaration = statementDispatch(dNode);
             defaultClause.add(declaration);
         }
 
@@ -225,7 +225,7 @@ public class StatementVisitor extends Visitor
 
         List<SwitchClause> switchClauseList = new ArrayList<SwitchClause>();
         for(Node sNode: switchClauseListNode) {
-            SwitchClause switchClause = visit(sNode);
+            SwitchClause switchClause = statementDispatch(sNode);
             switchClauseList.add(switchClause);
         }
 
@@ -235,7 +235,7 @@ public class StatementVisitor extends Visitor
     public ThrowStatement visitThrowStatement(Node n) {
         Node expressionNode = n.getNode(0);
 
-        Expression expression = new ExpressionVisitor().visit(expressionNode);
+        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
 
         return new ThrowStatement(expression);
     }
@@ -247,17 +247,17 @@ public class StatementVisitor extends Visitor
         List<Node> catchClauseListNode = null; // n.getList(1);
         List<Node> catchStatementListNode = null; // n.getList(2);
 
-        Statement statement = visit(statementNode);
+        Statement statement = statementDispatch(statementNode);
 
         List<CatchClause> catchClauseList = new ArrayList<CatchClause>();
         for(Node cNode : catchClauseListNode) {
-            CatchClause clause = visit(cNode);
+            CatchClause clause = statementDispatch(cNode);
             catchClauseList.add(clause);
         }
 
         List<Statement> catchStatementList = new ArrayList<Statement>();
         for(Node sNode : catchStatementListNode) {
-            Statement state = visit(sNode);
+            Statement state = statementDispatch(sNode);
             catchStatementList.add(state);
         }
 
@@ -268,13 +268,13 @@ public class StatementVisitor extends Visitor
         Node expressionNode = n.getNode(0);
         Node statementNode = n.getNode(1);
 
-        Expression expression = new ExpressionVisitor().visit(expressionNode);
-        Statement statement = visit(statementNode);
+        Expression expression = new ExpressionVisitor().expressionDispatch(expressionNode);
+        Statement statement = statementDispatch(statementNode);
 
         return new WhileStatement(expression, statement);
     }
 
-    public Statement visit(Node n)
+    public Statement statementDispatch(Node n)
     {
         Object o = super.dispatch(n);
         return (Statement) o;

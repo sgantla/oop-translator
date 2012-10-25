@@ -14,9 +14,7 @@ public class ShiftExpression extends BinaryExpression {
         leftExpression = left;
         rightExpression = right;
         this.operator = operator;
-    }
 
-    public Type getReturnType() {
-        return returnType;
+
     }
 }

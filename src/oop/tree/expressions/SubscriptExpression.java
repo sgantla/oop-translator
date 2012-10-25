@@ -15,8 +15,4 @@ public class SubscriptExpression extends BinaryExpression {
         rightExpression = right;
         operator = "";
     }
-
-    public Type getReturnType() {
-        return returnType;
-    }
 }

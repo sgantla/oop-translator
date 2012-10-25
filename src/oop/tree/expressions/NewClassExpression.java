@@ -25,8 +25,4 @@ public class NewClassExpression extends UnaryExpression {
         this.arguments = arguments;
         this.classBody = classBody;
     }
-
-    public Type getReturnType() {
-        return returnType;
-    }
 }
