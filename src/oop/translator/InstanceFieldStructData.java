@@ -3,7 +3,7 @@ package oop.translator;
 import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
-import oop.tree.interfaces.*;
+
 
 import xtc.tree.*;
 import xtc.type.*;

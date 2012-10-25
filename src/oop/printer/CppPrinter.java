@@ -30,7 +30,6 @@ import oop.translatorTree.*;
 import oop.tree.*; 
 import oop.tree.expressions.*; 
 import oop.tree.statements.*; 
-//import oop.tree.interfaces.*; 
 //import oop.tree.statements.FormalParameter;
 
 import xtc.type.*;

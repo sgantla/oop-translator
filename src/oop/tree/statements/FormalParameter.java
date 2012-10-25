@@ -1,7 +1,6 @@
 package oop.tree.statements;
 
 import oop.tree.*;
-import oop.tree.interfaces.*;
 
 import xtc.type.*;
 

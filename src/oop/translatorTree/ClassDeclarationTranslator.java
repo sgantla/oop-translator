@@ -29,10 +29,10 @@ public class ClassDeclarationTranslator extends ClassDeclaration {
 
 	public ClassDeclarationTranslator(CNode parent) {
 	    setParent(parent);
-	    setName(CppAstUtil.NodeName.ClassDeclaration;
+	    setName(CppAstUtil.NodeName.ClassDeclaration);
 	}
 	public ClassDeclarationTranslator() {
-	    setName(CppAstUtil.NodeName.ClassDeclaration;
+	    setName(CppAstUtil.NodeName.ClassDeclaration);
 	}
 
 	/* ClassDeclaration Members */
