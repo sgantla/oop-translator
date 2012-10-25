@@ -14,9 +14,13 @@ public class MultiplicativeExpression extends BinaryExpression {
         leftExpression = left;
         rightExpression = right;
         operator = "*";
-    }
 
-    public Type getReturnType() {
-        return returnType;
+        NumberT.Kind leftReturn = ((IntegerT)left.getReturnType()).getKind();
+        NumberT.Kind rightReturn = ((IntegerT)right.getReturnType()).getKind();
+
+        if(leftReturn.compareTo(rightReturn) < 0)
+            returnType = rightExpression.getReturnType();
+        else
+            returnType = leftExpression.getReturnType();
     }
 }

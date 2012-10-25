@@ -10,12 +10,10 @@ import xtc.type.*;
 
 public class SelectionExpression extends UnaryExpression {
 
-    public SelectionExpression(Expression expression, String operator) {
-        this.expression = expression;
-        this.operator = operator;
-    }
+    public String name;
 
-    public Type getReturnType() {
-        return returnType;
+    public SelectionExpression(Expression expression, String name) {
+        this.expression = expression;
+        this.name = name;
     }
 }
