@@ -14,10 +14,7 @@ public class LogicalAndExpression extends BinaryExpression {
         leftExpression = left;
         rightExpression = right;
         operator = "&&";
-        // returnType = new Boolean();
-    }
-
-    public Type getReturnType() {
-        return new BooleanT(); 
+        
+        returnType = BooleanT.TYPE;
     }
 }

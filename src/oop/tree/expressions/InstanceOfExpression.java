@@ -15,6 +15,6 @@ public class InstanceOfExpression extends UnaryExpression {
     public InstanceOfExpression(Expression expression, Type type) {
         this.expression = expression;
         this.type = type;
-        //returnType = new Boolean();
+        returnType = BooleanT.TYPE;
     }
 }

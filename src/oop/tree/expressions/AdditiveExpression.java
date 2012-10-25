@@ -14,12 +14,19 @@ public class AdditiveExpression extends BinaryExpression {
         operator = "+";
         leftExpression = left;
         rightExpression = right;
-    }
 
-    public Type getType()
-    {
+        if (leftExpression.getReturnType() instanceof IntegerT && rightExpression.getReturnType() instanceof IntegerT) {
 
-        //TODO: What goes here? How do we fill out return type?
-        return returnType;
+        NumberT.Kind leftReturn = ((IntegerT)left.getReturnType()).getKind();
+        NumberT.Kind rightReturn = ((IntegerT)right.getReturnType()).getKind();
+
+        if(leftReturn.compareTo(rightReturn) < 0)
+            returnType = rightExpression.getReturnType();
+        else
+            returnType = leftExpression.getReturnType();
+        }
+        else {
+            // returnType is string
+        }
     }
 }

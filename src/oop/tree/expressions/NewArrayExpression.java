@@ -17,13 +17,10 @@ public class NewArrayExpression extends UnaryExpression {
     int dimensions; //opt
 
     public NewArrayExpression(TypeName typeName, List<Expression> concreteDimension, int dimensions, Expression expression) {
+
         this.typeName = typeName;
         this.concreteDimensions = concreteDimensions;
         this.dimensions = dimensions;
         this.expression = expression;
-    }
-
-    public Type getReturnType() {
-        return returnType;
     }
 }
