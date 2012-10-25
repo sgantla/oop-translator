@@ -2,6 +2,9 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
+import oop.tree.*;
+import oop.tree.expressions.*;
+import oop.tree.statements.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -14,10 +17,10 @@ public class FieldDeclarationTranslator extends FieldDeclaration {
 
     private class Input {
 	Type type;
-	List<Modifier> modifiers = new ArrayList<Modifier>();
+	List<Modifiers> modifiers = new ArrayList<Modifiers>();
     }
     private class Output {
-	List<Modifier> modifiers = new ArrayList<Modifier>();
+	List<Modifiers> modifiers = new ArrayList<Modifiers>();
 	Type type;
 	String declarator;
 	Expression initializer;
@@ -43,7 +46,7 @@ public class FieldDeclarationTranslator extends FieldDeclaration {
     public Expression getInitializer () {
 	return cpp.initializer;
     }
-    public List<Modifier> getModifiers() {
+    public List<Modifiers> getModifiers() {
 	return cpp.modifiers;
     }
   
@@ -59,19 +62,19 @@ public class FieldDeclarationTranslator extends FieldDeclaration {
 	
 	// Possible modifiers: public, protected, private, static, final
 	Node modifiersNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Modifiers);
-	java.modifiers = JavaAstUtil.parseModifiers(modifiersNode);
+	//java.modifiers = JavaAstUtil.parseModifiers(modifiersNode);
 	
 	Translator.reportFieldModifiersAndLocation(java.type, java.modifiers, n.getLocation());
 	
 	// Get initialization expression
 	Node expressionNode = declaratorNode.getNode(2);
 	if (expressionNode != null) {
-	    cpp.initializer = new ExpressionVisitor().dispatch(expressionNode);
+	    cpp.initializer = new ExpressionVisitor(getParent().getScopeName()).expressionDispatch(expressionNode);
 	}
     }
     
     /* FieldDeclaratorTranslator Members */
-    public ExpressionTranslator removeInitializer () {
+    public Expression removeInitializer () {
 	Expression expr = cpp.initializer;
 	cpp.initializer = null;
 	return expr;
@@ -80,9 +83,9 @@ public class FieldDeclarationTranslator extends FieldDeclaration {
 	cpp.declarator = declarator;
     }
     public boolean hasInitializer () {
-	return (cpp.initialExpression != null);
+	return (cpp.initializer != null);
     }
     public boolean isStatic() {
-	return (cpp.modifiers.indexOf(Modifier.STATIC) >= 0);
+	return (cpp.modifiers.indexOf(Modifiers.STATIC) >= 0);
     }   
 }

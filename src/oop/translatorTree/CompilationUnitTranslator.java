@@ -2,6 +2,9 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
+import oop.tree.*;
+import oop.tree.expressions.*;
+import oop.tree.statements.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -49,7 +52,7 @@ public class CompilationUnitTranslator extends CppCompilationUnit {
 	/* TranslatorNode Members */
 	public void initialize(Node n) {
 		String scopeName = n.getStringProperty(Constants.SCOPE);
-		setQualifiedScopeName(scopeName);
+		setScopeName(scopeName);
 
 		Node packageNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.PackageDeclaration);
 		if (packageNode != null) {

@@ -2,6 +2,10 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
+import oop.tree.*;
+import oop.tree.expressions.*;
+import oop.tree.statements.*;
+import oop.translator.VTable;
 
 import xtc.tree.*;
 import xtc.Constants;
@@ -26,7 +30,7 @@ public class ClassBodyTranslator extends ClassBody {
     private List<Block> staticBlockDeclarations;
 
     private VTable vtable; 
-    private InstanceFieldStructData instanceFieldStructs;
+    private List<InstanceFieldStructData> instanceFieldStructs;
     private ClassT classType;
     
     public ClassBodyTranslator(CNode parent) {
@@ -36,11 +40,6 @@ public class ClassBodyTranslator extends ClassBody {
     public ClassBodyTranslator() {
 	setName(CppAstUtil.NodeName.ClassBody);
     }
-    
-    /* ClassBody Members */
-    public List<Declaration> getDeclarations() {
-
-    }    
     
     /* TranslatorNode Members */
     public void initialize(Node n) {  
@@ -54,7 +53,7 @@ public class ClassBodyTranslator extends ClassBody {
 	vtable = inheritanceData.getVirtualMethodTable();
 	instanceFieldStructs = inheritanceData.getInstanceFieldStructs();
 	
-	classType = Translator.getClassType():
+	classType = Translator.getClassType();
 	
 	// Iterate through child nodes to, initializing field, method, and constructor declarations
     	for (Object child : n) {
@@ -75,7 +74,7 @@ public class ClassBodyTranslator extends ClassBody {
 	instanceFieldStruct.setClassType(Translator.getClassType());
 	instanceFieldStruct.setTypeName(Translator.getInstanceFieldStructTypeName(classType));
 	instanceFieldStruct.setDeclarator(Translator.getInstanceFieldStructDeclarator(classType));
-	instanceFieldStruct.setFieldDeclarations(fieldDeclarations);
+	instanceFieldStruct.setFieldDeclarations(instanceFieldDeclarations);
 	
 	// Add new the newly-created struct to the full list of this classes fields (those inherited from parent + its own)
 	instanceFieldStructs.add(instanceFieldStruct);
@@ -97,8 +96,8 @@ public class ClassBodyTranslator extends ClassBody {
     	    if (fd.isStatic()) {
 		staticFieldDeclarations.add(fd);
     	    } else {
-		if (fd.hasExpression()) {
-		    Expression expr = fd.removeExpression();
+		if (fd.hasInitializer()) {
+		    Expression expr = fd.removeInitializer();
 		    initializers.add(new Initializer(fd, expr));
 		} else {
 		    initializers.add(new Initializer(fd, null));

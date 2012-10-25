@@ -3,9 +3,7 @@ package oop.tree.statements;
 import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
-import oop.tree.interfaces.*;
 import oop.tree.statements.*;
-import oop.tree.interfaces.*; 
 
 //import oop.tree.*; 
 

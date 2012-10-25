@@ -3,7 +3,7 @@ package oop.translator;
 import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
-import oop.tree.interfaces.*;
+
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -17,7 +17,7 @@ public class InstanceFieldStructData {
     private ClassT classType;
     private String typeName;
     private String declarator;
-    private List<FieldDeclarationTranslator> fields;
+    private List<FieldDeclarationTranslator> fields = new ArrayList<FieldDeclarationTranslator>();
     
     public void setClassType(ClassT classType) {
 	this.classType = classType;
@@ -43,5 +43,17 @@ public class InstanceFieldStructData {
     }
     public List<FieldDeclarationTranslator> getFields() {
 	return fields;
+    }
+    
+    public InstanceFieldStructData copy() {
+	
+	InstanceFieldStructData newStructData = new InstanceFieldStructData();
+	newStructData.setClassType(classType.copy());
+	newStructData.setDeclarator(declarator);
+	newStructData.setTypeName(typeName);
+	
+	// not going to copy actual fields
+	
+	return newStructData;
     }
 }

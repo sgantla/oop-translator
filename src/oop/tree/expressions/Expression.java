@@ -1,7 +1,6 @@
 package oop.tree.expressions;
 
 import oop.tree.*;
-import oop.tree.interfaces.*;
 import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;

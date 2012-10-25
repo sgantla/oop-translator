@@ -3,7 +3,9 @@ package oop.translator;
 import oop.preprocessor.*;
 import oop.translator.*;
 import oop.translatorTree.*;
-import oop.tree.interfaces.*;
+import oop.tree.expressions.*;
+import oop.tree.CNode;
+import oop.tree.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -18,7 +20,7 @@ public class Translator {
     private static CompilationUnitPod rootPod;
     private static CompilationUnitPod currentPod;
     private static SymbolTable masterSymbolTable;
-    private static Map<ClassT, List<Expression>> unresolvedExpressions = new Map<ClassT, List<Expression>>();
+    private static Map<ClassT, List<Expression>> unresolvedExpressions = new HashMap<ClassT, List<Expression>>();
     private static ClassT currentClass;
     
     public static void setCurrentPod(CompilationUnitPod pod) {
@@ -39,12 +41,12 @@ public class Translator {
 	}	
     }
     
-    public static registerUnresolvedExpression(Expression expr) {
+    public static void registerUnresolvedExpression(Expression expr) {
 	ClassT classType = currentPod.getClassType();
-	if (unresolvedExpressions.containsKey(classType) {
+	if (unresolvedExpressions.containsKey(classType)) {
 	    unresolvedExpressions.get(classType).add(expr);
 	} else {
-	    List<Expression> expressions = new List<Expression>();
+	    List<Expression> expressions = new ArrayList<Expression>();
 	    expressions.add(expr);
 	    unresolvedExpressions.put(classType, expressions);
 	}
@@ -61,18 +63,18 @@ public class Translator {
 	return "__" + classType.getName() + "_ftable";
     }
     
-    public static void reportMethodModifiers(MethodT method, List<Modifier> modifiers) {
+    public static void reportMethodModifiers(MethodT method, List<Modifiers> modifiers) {
 	method.addAttribute(new Attribute("modifiers", modifiers));
 	
     }
     
-    public static void reportFieldModifiersAndLocation(Type type, List<Modifier> modifiers, Location location) {
+    public static void reportFieldModifiersAndLocation(Type type, List<Modifiers> modifiers, Location location) {
 	type.addAttribute(new Attribute("modifiers", modifiers));
 	type.addAttribute(new Attribute("location", location));
     }
   
     public static Type resolvePrimaryIdentifier(String identifier, String scopeName, Location location) {
-	
+	return null;
     }
     
     public static MethodT resolveCallExpression(Type callee, String name, List<Type> argTypes) {
@@ -88,7 +90,7 @@ public class Translator {
 	return conflictingMethod.getName(); 
     }
     
-    public static MethodT resolveMethodType(MethodDeclarationTranslator method) {
+    public static MethodT resolveMethodType(CNode method) {
 	
 	String scopeName = method.getScopeName();
 	SymbolTable.Scope scope = masterSymbolTable.getScope(scopeName);
@@ -108,7 +110,7 @@ public class Translator {
 	
 	// Find closest scope
 	String qualifiedScopeName = null;
-	while (node != null && ((qualifiedScopeName = node.getQualifiedScopeName()) == null)) {
+	while (node != null && ((qualifiedScopeName = node.getScopeName()) == null)) {
 	    node = node.getParent();
 	}
 	
