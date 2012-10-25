@@ -24,6 +24,6 @@ import java.util.List;
 public class ClassBody extends CNode {
 
     // Pointer _vptr;
-    List<Declaration> declarations;
+    public List<Declaration> declarations;
     
 }

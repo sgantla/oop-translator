@@ -11,13 +11,12 @@ import xtc.util.*;
 import java.util.*;
 import java.io.*;
 
-public class InitializationField 
-    implements InitializationListEntry {
-    
+public class Initializer {
+  
     private FieldDeclarationTranslator fieldDeclaration;
     private ExpressionTranslator expression;
     
-    public InitializationField(FieldDeclarationTranslator fieldDeclaration, ExpressionTranslator expression) {
+    public Initializer(FieldDeclarationTranslator fieldDeclaration, ExpressionTranslator expression) {
 	this.fieldDeclaration = fieldDeclaration;
 	this.expression = expression;
     }

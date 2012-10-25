@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FieldDeclaration extends Declaration {
-    List<Modifiers> modifiers;
-    Type type;
-    String name;
-    Expression assignment;
+    public List<Modifiers> modifiers;
+    public Type type;
+    public String name;
+    public Expression assignment;
 }
 

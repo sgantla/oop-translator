@@ -2,8 +2,6 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
-import oop.translatorTree.*;
-import oop.tree.interfaces.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -13,8 +11,7 @@ import xtc.Constants;
 import java.util.*;
 import java.io.*;
 
-public class CompilationUnitTranslator extends TranslatorNode 
-implements CompilationUnit {
+public class CompilationUnitTranslator extends CppCompilationUnit {
 
 	private class Input {
 		String packageDec;      
@@ -29,9 +26,14 @@ implements CompilationUnit {
 	private Input java = new Input();
 	private Output cpp = new Output();
 
-	public CompilationUnitTranslator(TranslatorNode parent) {
-		super(parent);
+	public CompilationUnitTranslator(CNode parent) {
+	    setParent(parent);
+	    setName(CppAstUtil.NodeName.CompilationUnit);
 	}
+	public CompilationUnitTranslator() {
+	    setName(CppAstUtil.NodeName.CompilationUnit);
+	}
+
 
 	/* CompilationUnit Members */ 
 	public List<String> getNameSpaceDeclarations() {
@@ -42,11 +44,6 @@ implements CompilationUnit {
 	}
 	public ClassDeclaration getClassDeclaration() {
 		return cpp.classDeclaration;
-	}
-
-	/* CppAstNode Members */
-	public CppAstUtil.NodeName getNodeType () {
-		return CppAstUtil.NodeName.CompilationUnit;
 	}
 
 	/* TranslatorNode Members */

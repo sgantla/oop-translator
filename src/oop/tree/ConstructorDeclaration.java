@@ -5,10 +5,10 @@ import java.util.List;
 import oop.tree.interfaces.*;
 
 public class ConstructorDeclaration extends Declaration {
-    List<Modifiers> modifiers;
-    String name;
-    List<FormalParameter> formalParameters;
-    //ThrowsClause throws;
-    List<InitializationListEntry> initializations;
-    Block methodBlock;
+    public List<Modifiers> modifiers;
+    public String name;
+    public List<FormalParameter> formalParameters;
+    //public ThrowsClause throws;
+    public List<InitializationListEntry> initializations;
+    public Block methodBlock;
 }

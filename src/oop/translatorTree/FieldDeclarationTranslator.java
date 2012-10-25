@@ -2,8 +2,6 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
-import oop.translatorTree.*;
-import oop.tree.interfaces.*;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -12,23 +10,27 @@ import xtc.util.*;
 import java.util.*;
 import java.io.*;
 
-public class FieldDeclarationTranslator extends DeclarationTranslator
-    implements FieldDeclaration {
+public class FieldDeclarationTranslator extends FieldDeclaration {
 
     private class Input {
 	Type type;
+	List<Modifier> modifiers = new ArrayList<Modifier>();
     }
     private class Output {
 	List<Modifier> modifiers = new ArrayList<Modifier>();
 	Type type;
 	String declarator;
-	ExpressionTranslator assignment;
+	Expression initializer;
     }
     private Input java = new Input();
     private Output cpp = new Output();
 
-    public FieldDeclarationTranslator (TranslatorNode parent) {
-	super(parent);
+    public FieldDeclarationTranslator (CNode parent) {
+	setParent(parent);
+	setName(CppAstUtil.NodeName.FieldDeclaration);
+    }
+    public FieldDeclarationTranslator () {
+	setName(CppAstUtil.NodeName.FieldDeclaration);
     }
     
     /* FieldDeclaration Members */
@@ -36,54 +38,49 @@ public class FieldDeclarationTranslator extends DeclarationTranslator
 	return cpp.declarator;
     }
     public Type getType() {
-	return java.type; // Not implemented. Have to decide how to translate the java Type into cpp.
+	return cpp.type;
     }
-    public ExpressionTranslator getExpression () {
-	return cpp.assignment;
+    public Expression getInitializer () {
+	return cpp.initializer;
     }
-    
-    /* CppAstNode Members */
-    public CppAstUtil.NodeName getNodeType() {
-	return CppAstUtil.NodeName.FieldDeclaration;
+    public List<Modifier> getModifiers() {
+	return cpp.modifiers;
     }
-    
+  
     /* TranslatorNode Members */ 
     public void initialize(Node n) {
     
-	// Record if field is static 
-	Node modifiersNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Modifiers);
-	if (modifiersNode != null) {
-	    for (Node modifierNode : JavaAstUtil.getChildrenByName(modifiersNode, JavaAstUtil.NodeName.Modifier)) {
-		if (JavaAstUtil.extractString(modifierNode).equals("static")) {
-		    cpp.modifiers.add(Modifier.STATIC);
-		}
-	    }
-	}
-	
 	Node declaratorsNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Declarators);
 	Node declaratorNode = JavaAstUtil.getChildByName(declaratorsNode, JavaAstUtil.NodeName.Declarator);
 	cpp.declarator = declaratorNode.getString(0);
+	
 	// Resolve the declarator to a Type for the field
-
 	java.type = Translator.resolveDeclaratorType(cpp.declarator, this);
 	
+	// Possible modifiers: public, protected, private, static, final
+	Node modifiersNode = JavaAstUtil.getChildByName(n, JavaAstUtil.NodeName.Modifiers);
+	java.modifiers = JavaAstUtil.parseModifiers(modifiersNode);
+	
+	Translator.reportFieldModifiersAndLocation(java.type, java.modifiers, n.getLocation());
+	
+	// Get initialization expression
 	Node expressionNode = declaratorNode.getNode(2);
 	if (expressionNode != null) {
-	    /* TODO: Create child based on expression. Need to implement a general way to handle an expression child from any node */
+	    cpp.initializer = new ExpressionVisitor().dispatch(expressionNode);
 	}
     }
     
     /* FieldDeclaratorTranslator Members */
-    public ExpressionTranslator removeExpression () {
-	ExpressionTranslator expr = cpp.assignment;
-	cpp.assignment = null;
+    public ExpressionTranslator removeInitializer () {
+	Expression expr = cpp.initializer;
+	cpp.initializer = null;
 	return expr;
     }
     public void setDeclarator(String declarator) {
 	cpp.declarator = declarator;
     }
-    public boolean hasExpression () {
-	return (cpp.assignment != null);
+    public boolean hasInitializer () {
+	return (cpp.initialExpression != null);
     }
     public boolean isStatic() {
 	return (cpp.modifiers.indexOf(Modifier.STATIC) >= 0);

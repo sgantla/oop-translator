@@ -45,6 +45,7 @@ public class PodIterator {
 			System.out.println("There are no more pods in this tree. Exiting Program..");
 			System.exit(0);				// TODO: This seems ugly. May cause issues. 
 		}
+		
 		CompilationUnitPod nullPod = new CompilationUnitPod(); 
 		return nullPod; 
 	}

@@ -5,8 +5,8 @@ import oop.tree.expressions.*;
 
 public class WhileStatement extends Statement {
 
-    Expression expression;
-    Statement statement;
+    public Expression expression;
+    public Statement statement;
 
     public WhileStatement(Expression exp, Statement statement) {
         expression = exp;

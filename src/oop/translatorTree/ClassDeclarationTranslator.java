@@ -2,9 +2,6 @@ package oop.translatorTree;
 
 import oop.preprocessor.*;
 import oop.translator.*;
-import oop.translatorTree.*;
-import oop.tree.interfaces.*;
-import oop.tree.Modifier;
 
 import xtc.tree.*;
 import xtc.type.*;
@@ -14,8 +11,7 @@ import xtc.util.*;
 import java.util.*;
 import java.io.*;
 
-public class ClassDeclarationTranslator extends DeclarationTranslator 
-implements ClassDeclaration {
+public class ClassDeclarationTranslator extends ClassDeclaration {
 
 	private class Input { 
 		List<String> modifiers = new ArrayList<String>();	
@@ -31,8 +27,12 @@ implements ClassDeclaration {
 	private Input java = new Input();
 	private Output cpp = new Output();
 
-	public ClassDeclarationTranslator(TranslatorNode parent) {
-		super(parent);
+	public ClassDeclarationTranslator(CNode parent) {
+	    setParent(parent);
+	    setName(CppAstUtil.NodeName.ClassDeclaration);
+	}
+	public ClassDeclarationTranslator() {
+	    setName(CppAstUtil.NodeName.ClassDeclaration);
 	}
 
 	/* ClassDeclaration Members */
@@ -47,11 +47,6 @@ implements ClassDeclaration {
 	}
 	public ClassBody getClassBody() {
 		return cpp.classBody;
-	}
-
-	/* CppAstNode Members */
-	public CppAstUtil.NodeName getNodeType () {
-		return CppAstUtil.NodeName.ClassDeclaration;
 	}
 
 	/* TranslatorNode Members */
