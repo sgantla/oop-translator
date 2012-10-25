@@ -5,7 +5,7 @@ import oop.tree.expressions.*;
 
 public class ReturnStatement extends Statement {
 
-    Expression returnExpression;
+    public Expression returnExpression;
 
     public ReturnStatement(Expression expression) {
         returnExpression = expression;

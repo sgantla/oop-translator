@@ -15,12 +15,12 @@ import oop.tree.Modifier;
 
 public class ClassDeclaration extends Declaration {
 
-    List<Modifier> modifiers;
-    String name;
-    ClassBody classBody;
+    public List<Modifier> modifiers;
+    public String name;
+    public ClassBody classBody;
 
-    VTable _vTable; // female
-    ClassDeclaration _inheritsFrom;
+    public VTable _vTable; // female
+    public ClassDeclaration _inheritsFrom;
     // JavaClassBody _jClassBody;
     // Mapping _names;
 }

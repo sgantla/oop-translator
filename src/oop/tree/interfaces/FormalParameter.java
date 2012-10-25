@@ -14,8 +14,8 @@ import java.util.*;
 
 public interface FormalParameter extends CppAstNode {
 
-    Modifier getModifiers();
-    Type getType();
-    String getName();
+    public Modifier getModifiers();
+    public Type getType();
+    public String getName();
 }
 

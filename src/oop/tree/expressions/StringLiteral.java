@@ -8,7 +8,7 @@ import oop.translatorTree.*;
 
 public class StringLiteral extends Literal {
 
-    String value;
+    public String value;
     
     public StringLiteral(String value) {
         this.value = value;

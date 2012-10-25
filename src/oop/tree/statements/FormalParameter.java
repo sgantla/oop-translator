@@ -5,11 +5,11 @@ import oop.tree.interfaces.*;
 
 import java.util.List;
 
-public class FormalParameter extends Node {
+public class FormalParameter extends CNode {
 
-   List<Modifier> modifiers;
-   Type type;
-   String name;
+   public List<Modifier> modifiers;
+   public Type type;
+   public String name;
 
    public FormalParameter(List<Modifier> modifiers, Type type, String name) {
        this.modifiers = modifiers;

@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MethodDeclaration extends Declaration {
-    List<Modifier> modifiers;
-    Type returnType;
-    List<Modifier> returnTypeModifiers;
-    String name;
-    List<FormalParameter> formalParameters;
-    //ThrowsClause throws;
-    Block methodBlock;
+    public List<Modifier> modifiers;
+    public Type returnType;
+    public List<Modifier> returnTypeModifiers;
+    public String name;
+    public List<FormalParameter> formalParameters;
+    //public ThrowsClause throws;
+    public Block methodBlock;
 
     boolean _isVirtual;
 }

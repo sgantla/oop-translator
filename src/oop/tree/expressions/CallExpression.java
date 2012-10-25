@@ -11,9 +11,9 @@ import java.util.List;
 public class CallExpression extends UnaryExpression {
 
     // expression is opt
-    TypeArgument typeArguments; //opt
-    String name;
-    List<Expression> arguments;
+    public TypeArgument typeArguments; //opt
+    public String name;
+    public List<Expression> arguments;
 
     public CallExpression(Expression expression, TypeArgument typeArguments, String name, List<Expression> args) {
 
